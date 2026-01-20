@@ -11,31 +11,30 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Home",
         "groups": [
           {
             "group": "Getting started",
             "pages": [
-              "getting-started/index",
-              "getting-started/quickstart",
-              "getting-started/development"
+              "getting-started/introduction",
+              "getting-started/quickstart"
             ]
           },
           {
             "group": "Integration",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "integration/distribution-channels",
+              "integration/market-makers"
             ]
           },
           {
             "group": "Resources",
             "pages": [
-              "general/faqs",
-              "general/fees",
-              "general/security",
-              "general/risk-and-compliance",
-              "general/treasury-addresses"
+              "resources/faqs",
+              "resources/fees",
+              "resources/security",
+              "resources/risk-and-compliance",
+              "resources/treasury-addresses"
             ]
           }
         ]
@@ -77,8 +76,8 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
+    "light": "/images/logo/light.svg",
+    "dark": "/images/logo/dark.svg",
     "href": "https://near-intents.com"
   },
   "navbar": {
