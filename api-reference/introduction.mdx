@@ -1,33 +1,120 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+icon: computer-mouse
+layout:
+  title:
+    visible: true
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: false
+  pagination:
+    visible: false
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+# 1Click Swap API
 
-## Welcome
+## What is 1Click Swap API?
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+1Click simplifies NEAR Intents by temporarily transferring assets to a trusted swapping agent that coordinates with [Market Makers](/integration/market-makers) to execute your intent. This REST API abstracts away the complexity of intent creation, solver coordination, and transaction execution, letting you focus on your user experience.
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
+It features:
+
+- Simple REST endpoints for intent creation and management
+- Automatic solver discovery and competitive pricing
+- Built-in transaction handling and status tracking
+- Support for cross-chain intents
+
+## How 1Click API Works
+
+<Frame>
+<img src="../../.gitbook/assets/distribution-channels/1Click-API-flow.png" alt="1Click API Flow" width="600px" />
+</Frame>
+
+1. **Request a quote** - Send the user's intent request to 1Click's [`Request Quote`](#post-v0-quote) endpoint
+   - Receive the best available quote with a unique deposit address
+2. **Transfer tokens** - If provided quote is satisfactory, deposit tokens to the unique address provided
+   - 1Click automatically begins the swapping process upon receipt
+3. **Submit deposit transaction** - (optional)
+   - Use the [`Submit Deposit Tx`](#post-v0-deposit-submit) endpoint with your transaction hash to speed up processing
+4. **Monitor progress** - (optional)
+   - You can query the process at any time with the [`Get Execution Status`](#get-v0-status) endpoint
+
+**Result:** The swap either succeeds with tokens delivered to your specified address, or fails with funds automatically refunded to your refund address. Failed swaps can be retried by repeating this flow.
+
+<Info>
+Centralized exchanges (CEXes) often use intermediate or per-user deposit addresses. These may not credit deposits sent via NEAR Intents until they are recognized or whitelisted. We recommend sending a small test amount before attempting full-scale transfers.
+</Info>
+
+## Quickstart 1Click Tutorial
+
+To quickly get started with 1Click see this example repo breaking down each step above: https://github.com/near-examples/near-intents-examples. This repo will show you how to quickly get started performing cross-chain swaps using 1Click's TypeScript SDK.
+
+## API Specification (v0)
+
+Auto-generate clients using our [OpenAPI spec](https://1click.chaindefuser.com/docs/v0/openapi.yaml).
+
+<Info>
+Authentication: Please [obtain a JWT token](https://docs.google.com/forms/d/e/1FAIpQLSdrSrqSkKOMb_a8XhwF0f7N5xZ0Y5CYgyzxiAuoC2g4a2N68g/viewform?usp=header) to avoid 0.1% (10 basis points) fee while using 1Click Swap API.
+</Info>
+
+### SDKs
+
+Pre-built SDKs for popular languages:
+
+- [TypeScript SDK](https://github.com/defuse-protocol/one-click-sdk-typescript)
+- [Go SDK](https://github.com/defuse-protocol/one-click-sdk-go)
+- [Rust SDK](https://github.com/defuse-protocol/one-click-sdk-rs)
+
+### Swap Statuses
+
+1Click Swap goes through these states in its lifecycle:
+
+- PENDING_DEPOSIT — Awaiting the deposit to the deposit address.
+- PROCESSING — Once the deposit on deposit address is detected, information is processed and executed by Market Makers.
+- SUCCESS — Funds are delivered to the specified destination chain/address. 
+- INCOMPLETE_DEPOSIT — Deposit is received but below required bridge or quoted amount.
+- REFUNDED — If the swap is not completed, funds are automatically returned to the refund address.
+- FAILED - Swap failed due to the error.
+
+<Frame caption="NEAR Intents 1Click Swap Statuses">
+<img src="../../.gitbook/assets/distribution-channels/1cs_state_diagram_near_intents.png" alt="NEAR Intents 1Click Swap Statuses" width="400px" />
+</Frame>
+
+### API Endpoints
+
+**Base URL:** https://1click.chaindefuser.com/
+
+| Name                 | Route         | Description                                         |
+|----------------------|--------------|-----------------------------------------------------|
+| [Get supported tokens](#get-v0-tokens) | /v0/tokens  | Retrieves list of tokens currently supported by 1Click |
+| [Request a swap quote](#post-v0-quote) | /v0/quote | Generates a swap quote based on input parameters (Intent) | 
+| [Submit deposit tx hash](#post-v0-deposit-submit) | /v0/deposit/submit | Optional route to speed up process with early deposit notification to 1Click |
+| [Check swap status](#get-v0-status) | /v0/status | Gets current status of a swap using unique deposit address |
+
+<Info>
+Use `dry: true` to display the quote price without generating a transaction. Set `dry: false` only at confirmation to reduce system load.
+</Info>
+
+## Endpoint Documentation
+
+Explore detailed documentation for each endpoint:
+
+<CardGroup cols={2}>
+<Card title="Get Supported Tokens" icon="list" href="/api-reference/endpoint/tokens">
+  GET /v0/tokens - Retrieve all supported tokens
 </Card>
 
-## Authentication
+<Card title="Request Swap Quote" icon="chart-line" href="/api-reference/endpoint/quote">
+  POST /v0/quote - Get the best swap rate
+</Card>
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+<Card title="Submit Deposit" icon="paper-plane" href="/api-reference/endpoint/deposit-submit">
+  POST /v0/deposit/submit - Speed up processing
+</Card>
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
+<Card title="Check Status" icon="magnifying-glass" href="/api-reference/endpoint/status">
+  GET /v0/status - Track swap progress
+</Card>
+</CardGroup>

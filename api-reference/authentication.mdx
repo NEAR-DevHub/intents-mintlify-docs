@@ -1,0 +1,84 @@
+---
+title: 'Get Your API Key'
+description: 'Obtain a JWT token for authenticated API access'
+icon: 'key'
+---
+
+<Card
+  title="Partner Dashboard - Get API Key"
+  icon="key"
+  href="https://partners.near-intents.org/home"
+>
+  Visit the Partner Dashboard to obtain your JWT token for authenticated API access. Authenticated users avoid the 0.1% (10 basis points) platform fee.
+</Card>
+
+## Why Get an API Key?
+
+<Info>
+Authenticated requests using a JWT token are **fee-free** – you only pay network gas costs and market maker spreads. Unauthenticated requests incur a 0.1% (10 basis points) platform fee.
+</Info>
+
+## How to Use Your API Key
+
+Once you have your JWT token from the Partner Dashboard, include it in your API requests:
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://1click.chaindefuser.com/v0/quote \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "from_chain": "ethereum",
+    "from_token": "ETH",
+    "from_amount": "1000000000000000000",
+    "to_chain": "near",
+    "to_token": "USDC",
+    "destination_address": "your-account.near",
+    "refund_address": "0xYourEthereumAddress"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://1click.chaindefuser.com/v0/quote', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${YOUR_JWT_TOKEN}`
+  },
+  body: JSON.stringify({
+    from_chain: 'ethereum',
+    from_token: 'ETH',
+    from_amount: '1000000000000000000',
+    to_chain: 'near',
+    to_token: 'USDC',
+    destination_address: 'your-account.near',
+    refund_address: '0xYourEthereumAddress'
+  })
+});
+```
+
+```python Python
+import requests
+
+response = requests.post(
+  'https://1click.chaindefuser.com/v0/quote',
+  headers={
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {YOUR_JWT_TOKEN}'
+  },
+  json={
+    'from_chain': 'ethereum',
+    'from_token': 'ETH',
+    'from_amount': '1000000000000000000',
+    'to_chain': 'near',
+    'to_token': 'USDC',
+    'destination_address': 'your-account.near',
+    'refund_address': '0xYourEthereumAddress'
+  }
+)
+```
+</CodeGroup>
+
+<Tip>
+Store your JWT token securely and never commit it to version control. Use environment variables or secure secret management systems.
+</Tip>
