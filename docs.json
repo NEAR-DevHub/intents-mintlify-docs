@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "maple",
+  "name": "NEAR Intents",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#fb4d01",
+    "light": "#ff7043",
+    "dark": "#d94300"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -16,20 +16,20 @@
           {
             "group": "Getting started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "getting-started/index",
+              "getting-started/quickstart",
+              "getting-started/development"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Intent Creators",
             "pages": [
               "essentials/settings",
               "essentials/navigation"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Solvers / Market Makers",
             "pages": [
               "essentials/markdown",
               "essentials/code",
@@ -38,7 +38,7 @@
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Smart Contract Reference",
             "pages": [
               "ai-tools/cursor",
               "ai-tools/claude-code",
@@ -71,21 +71,27 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
+          "anchor": "Live Site",
+          "href": "https://near-intents.com",
           "icon": "book-open-cover"
         },
         {
-          "anchor": "Blog",
+          "anchor": "API Key Request",
           "href": "https://mintlify.com/blog",
           "icon": "newspaper"
+        },
+        {
+          "anchor": "System Status",
+          "href": "https://status.near-intents.org/posts/dashboard",
+          "icon": "server"
         }
-      ]
+      ] 
     }
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "dark": "/logo/dark.svg",
+    "href": "https://near-intents.com"
   },
   "navbar": {
     "links": [
