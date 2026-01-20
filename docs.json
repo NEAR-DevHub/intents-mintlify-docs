@@ -71,14 +71,9 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Live Site",
-          "href": "https://near-intents.com",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "API Key Request",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Supported Chains",
+          "href": "/resources/chain-support",
+          "icon": "check-circle"
         },
         {
           "anchor": "System Status",
