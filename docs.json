@@ -22,7 +22,7 @@
             ]
           },
           {
-            "group": "Intent Creators",
+            "group": "Integrators",
             "pages": [
               "essentials/settings",
               "essentials/navigation"
@@ -38,7 +38,7 @@
             ]
           },
           {
-            "group": "Smart Contract Reference",
+            "group": "Reference",
             "pages": [
               "ai-tools/cursor",
               "ai-tools/claude-code",
@@ -97,13 +97,13 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "https://t.me/near_intents"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Partner Dashboard",
+      "href": "https://partners.near-intents.org/"
     }
   },
   "contextual": {
@@ -120,9 +120,8 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/near_intents",
+      "github": "https://github.com/defuse-protocol"
     }
   }
 }
