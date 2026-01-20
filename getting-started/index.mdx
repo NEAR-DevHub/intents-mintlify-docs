@@ -1,26 +1,162 @@
 ---
 title: "Introduction"
-description: "What is \"NEAR Intents\"?"
+description: "A multichain transaction protocol that lets users specify outcomes while market makers compete for the best execution"
 ---
 
-NEAR Intents is a new multichain transaction protocol where users specify desired outcomes and let third parties compete to provide the best solution.
+## What is NEAR Intents?
 
+NEAR Intents is a revolutionary multichain transaction protocol that simplifies cross-chain interactions. Instead of navigating complex bridges, DEXs, and liquidity pools yourself, you simply declare your desired outcome and competitive market makers handle the rest.
 
-Intent Creator (User)
+**The traditional approach** requires you to:
+- Research bridge protocols and their fees
+- Find liquidity across multiple chains
+- Manage multiple transactions and gas fees
+- Monitor each step for failures
 
-Intent Fufiller (Market Makers)
+**With NEAR Intents**, you simply:
+- Specify what you want (e.g., "swap ETH on Ethereum for USDC on NEAR")
+- Market makers compete to give you the best rate
+- Receive your tokens or get automatically refunded if anything fails
 
+## How it works
 
-## Quickstart
+<Steps>
+<Step title="You create an intent">
+  Specify your desired outcome: the tokens you have, the tokens you want, and where you want them delivered.
+</Step>
 
-Get started using NEAR intents in your own project.
+<Step title="Market makers compete">
+  Multiple market makers bid to fulfill your intent, competing on price, speed, and execution quality.
+</Step>
+
+<Step title="Smart contracts verify">
+  The NEAR Intents protocol ensures atomic execution your swap either completes fully or you're automatically refunded.
+</Step>
+
+<Step title="You receive your tokens">
+  Your requested tokens arrive at your destination address, secured by on-chain verification.
+</Step>
+</Steps>
+
+## Key benefits
+
+<CardGroup cols={2}>
+<Card title="Simplest cross-chain experience" icon="sparkles">
+  The easiest way to transact across multiple chains and protocols. One simple request replaces dozens of complex steps.
+</Card>
+
+<Card title="Competitive pricing" icon="chart-line">
+  Market makers compete for your business, ensuring you get optimal rates without manual price comparison.
+</Card>
+
+<Card title="Automatic refunds" icon="shield-check">
+  If execution fails for any reason, your funds are automatically returned to your designated refund address.
+</Card>
+
+<Card title="Non-custodial security" icon="lock">
+  You maintain control of your assets throughout. Smart contracts enforce atomic execution guarantees.
+</Card>
+</CardGroup>
+
+## Who uses NEAR Intents?
+
+<Tabs>
+<Tab title="Wallet Developers">
+  Integrate cross-chain swaps directly into your wallet, offering users seamless multichain experiences without building bridge infrastructure.
+  
+  <Check>
+  Enable users to swap tokens across chains without leaving your interface.
+  </Check>
+</Tab>
+
+<Tab title="DApp Builders">
+  Allow users to interact with your application using tokens from any supported chain, removing blockchain barriers to entry.
+  
+  <Check>
+  Accept payments in any token while receiving your preferred token on your preferred chain.
+  </Check>
+</Tab>
+
+<Tab title="Traders">
+  Execute cross-chain arbitrage and portfolio rebalancing with competitive rates from multiple market makers.
+  
+  <Check>
+  Access deep liquidity across chains without fragmentation.
+  </Check>
+</Tab>
+
+<Tab title="Market Makers">
+  Compete to fulfill user intents, earning fees while providing valuable liquidity infrastructure.
+  
+  <Check>
+  Build automated strategies that serve intent requests profitably.
+  </Check>
+</Tab>
+</Tabs>
+
+## Architecture overview
+
+NEAR Intents consists of three core components working together:
+
+| Component | Role | Learn More |
+|-----------|------|------------|
+| **Distribution Channels** | Applications (wallets, exchanges, dApps) that enable users to create and broadcast intents | [Integration Guide](/intent-creators/examples) |
+| **Market Makers** | Agents that compete to fulfill intents, providing liquidity and execution | [Become a Market Maker](/essentials/markdown) |
+| **Verifier Smart Contract** | On-chain verification and settlement layer deployed on NEAR Protocol | [Technical Reference](/essentials/code) |
+
+<Info>
+**Recently renamed**: NEAR Intents was previously known as "Defuse". While documentation is being updated, you may see references to both names.
+</Info>
+
+## Getting started
+
+Choose your path based on your role:
+
+<CardGroup cols={2}>
+<Card title="Execute your first swap" icon="rocket" href="/getting-started/quickstart">
+  Complete your first cross-chain token swap in under 5 minutes using the 1Click API.
+</Card>
+
+<Card title="Integrate into your app" icon="code" href="/intent-creators/examples">
+  Add NEAR Intents to your wallet, exchange, or dApp with our integration examples.
+</Card>
+
+<Card title="Become a market maker" icon="chart-network" href="/essentials/markdown">
+  Learn how to provide liquidity and fulfill user intents profitably.
+</Card>
+
+<Card title="Explore supported chains" icon="link" href="/resources/chain-support">
+  View all supported blockchains, tokens, and cross-chain routes.
+</Card>
+</CardGroup>
+
+## Learn more
+
+<AccordionGroup>
+<Accordion title="How does NEAR Intents ensure security?">
+  NEAR Intents uses atomic execution enforced by smart contracts on NEAR Protocol. Transactions either complete fully with all conditions met, or they're automatically reverted and your funds returned to your refund address. All transactions are verified on-chain before settlement.
+</Accordion>
+
+<Accordion title="What chains and tokens are supported?">
+  NEAR Intents supports major blockchains including Ethereum, NEAR, and others. The list of supported chains and tokens is continuously expanding. Check our [Chain Support page](/resources/chain-support) for the current list.
+</Accordion>
+
+<Accordion title="What are the fees?">
+  The 1Click API charges 0.1% (10 basis points) for unauthenticated requests. Authenticated users (with JWT tokens) pay no platform fees—only network gas costs and market maker spreads. [Learn more about fees](/resources/fees).
+</Accordion>
+
+<Accordion title="How do market makers compete?">
+  When you create an intent, it's broadcast to multiple market makers who bid to fulfill it. They compete on price, speed, and execution quality. The protocol automatically selects the best execution path while ensuring your terms are met.
+</Accordion>
+</AccordionGroup>
+
+## Next steps
 
 <Card
-  title="Start here"
-  icon="rocket"
-  href="/getting-started/quickstart"
-  horizontal
+  title="Read the deep dive"
+  icon="book-open"
+  href="https://www.near.org/blog/unpacking-near-intents-a-deep-dive"
 >
-  Get started with NEAR Intents.
+  Explore the technical architecture and design philosophy behind NEAR Intents in this comprehensive blog post.
 </Card>
 

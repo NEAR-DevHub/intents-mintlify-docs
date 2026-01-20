@@ -1,92 +1,258 @@
 ---
 title: "Quickstart"
-description: "Quickly get started using NEAR Intents"
+description: "Execute your first cross-chain swap using NEAR Intents in under 5 minutes"
 ---
 
-## Get started in three steps
+## What you'll accomplish
 
-To create a NEAR Intent, you will need to:
+In this quickstart, you'll execute your first cross-chain token swap using NEAR Intents. You'll swap tokens from one blockchain to another without managing complex bridge interfaces or worrying about liquidity—NEAR Intents handles everything automatically.
+
+**Time to complete**: 5 minutes  
+**Result**: Tokens successfully transferred across chains to your destination address
+
+## How NEAR Intents works
+
+Instead of navigating multiple bridges and DEXs yourself, NEAR Intents lets you specify what you want (e.g., "swap 1 ETH on Ethereum for USDC on NEAR") and competitive market makers race to give you the best execution. You simply:
+
+1. Request a quote for your desired swap
+2. Send tokens to a unique deposit address
+3. Receive your swapped tokens on the destination chain
+
+Market makers compete for your business, ensuring optimal rates while the NEAR Intents protocol guarantees secure, atomic execution. If anything goes wrong, your funds are automatically refunded.
+
+<Info>
+**Prerequisites**: You'll need a small amount of tokens on a supported source chain. We recommend starting with a test amount (equivalent to $10-50) for your first swap.
+</Info>
+
+<Tip>
+**New to crypto swaps?** Think of NEAR Intents as a universal translator for blockchain assets—it converts your tokens from one blockchain's "language" to another's, automatically finding the best exchange rate.
+</Tip>
+
+## Execute your first swap
 
 <Steps>
-<Step title="Get Supported tokens">
+<Step title="Get supported tokens">
+  First, check which tokens and chains are currently supported by the 1Click API.
+
+  <CodeGroup>
+  ```bash cURL
+  curl https://1click.chaindefuser.com/v0/tokens
+  ```
+
+  ```javascript JavaScript
+  const response = await fetch('https://1click.chaindefuser.com/v0/tokens');
+  const tokens = await response.json();
+  console.log(tokens);
+  ```
+
+  ```python Python
+  import requests
+  response = requests.get('https://1click.chaindefuser.com/v0/tokens')
+  tokens = response.json()
+  print(tokens)
+  ```
+  </CodeGroup>
+
+  <Check>
+  You'll receive a list of supported tokens with their chain, address, and symbol information.
+  </Check>
 </Step>
+
 <Step title="Request a quote">
+  Request a quote for your intended swap. The API will return the best available rate and a unique deposit address.
+
+  <CodeGroup>
+  ```bash cURL
+  curl -X POST https://1click.chaindefuser.com/v0/quote \
+    -H "Content-Type: application/json" \
+    -d '{
+      "dry": false,
+      "from_chain": "ethereum",
+      "from_token": "ETH",
+      "from_amount": "1000000000000000000",
+      "to_chain": "near",
+      "to_token": "USDC",
+      "destination_address": "your-near-account.near",
+      "refund_address": "0xYourEthereumAddress"
+    }'
+  ```
+
+  ```javascript JavaScript
+  const quote = await fetch('https://1click.chaindefuser.com/v0/quote', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      dry: false,
+      from_chain: 'ethereum',
+      from_token: 'ETH',
+      from_amount: '1000000000000000000',
+      to_chain: 'near',
+      to_token: 'USDC',
+      destination_address: 'your-near-account.near',
+      refund_address: '0xYourEthereumAddress'
+    })
+  });
+  const result = await quote.json();
+  ```
+
+  ```python Python
+  import requests
+  quote = requests.post('https://1click.chaindefuser.com/v0/quote', 
+    json={
+      'dry': False,
+      'from_chain': 'ethereum',
+      'from_token': 'ETH',
+      'from_amount': '1000000000000000000',
+      'to_chain': 'near',
+      'to_token': 'USDC',
+      'destination_address': 'your-near-account.near',
+      'refund_address': '0xYourEthereumAddress'
+    }
+  )
+  result = quote.json()
+  ```
+  </CodeGroup>
+
+  <Tip>
+  Set `dry: true` when you're just checking prices without generating a transaction. Only set it to `false` when you're ready to execute.
+  </Tip>
+
+  <Warning>
+  Quotes expire after a short time. Execute your swap promptly after receiving a quote.
+  </Warning>
 </Step>
-<Step title="Send tokens">  
+
+<Step title="Send tokens to deposit address">
+  Transfer your tokens to the unique deposit address provided in the quote response.
+
+  The 1Click service will automatically detect your deposit and begin processing the swap.
+
+  <Info>
+  Save your transaction hash - you'll need it for the next optional step and for tracking your swap status.
+  </Info>
 </Step>
-<Step title="Sumbit TX Hash (Optional)">
+
+<Step title="Submit transaction hash (Optional)">
+  Speed up processing by notifying 1Click of your deposit transaction immediately.
+
+  <CodeGroup>
+  ```bash cURL
+  curl -X POST https://1click.chaindefuser.com/v0/deposit/submit \
+    -H "Content-Type: application/json" \
+    -d '{
+      "deposit_address": "address-from-quote-response",
+      "tx_hash": "0xYourTransactionHash"
+    }'
+  ```
+
+  ```javascript JavaScript
+  await fetch('https://1click.chaindefuser.com/v0/deposit/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': application/json' },
+    body: JSON.stringify({
+      deposit_address: 'address-from-quote-response',
+      tx_hash: '0xYourTransactionHash'
+    })
+  });
+  ```
+
+  ```python Python
+  requests.post('https://1click.chaindefuser.com/v0/deposit/submit',
+    json={
+      'deposit_address': 'address-from-quote-response',
+      'tx_hash': '0xYourTransactionHash'
+    }
+  )
+  ```
+  </CodeGroup>
+
+  <Tip>
+  While optional, submitting your transaction hash can significantly reduce processing time.
+  </Tip>
+</Step>
+
+<Step title="Monitor swap status">
+  Check the status of your swap at any time using the deposit address.
+
+  <CodeGroup>
+  ```bash cURL
+  curl "https://1click.chaindefuser.com/v0/status?deposit_address=your-deposit-address"
+  ```
+
+  ```javascript JavaScript
+  const status = await fetch(
+    'https://1click.chaindefuser.com/v0/status?deposit_address=your-deposit-address'
+  );
+  const result = await status.json();
+  ```
+
+  ```python Python
+  status = requests.get(
+    'https://1click.chaindefuser.com/v0/status',
+    params={'deposit_address': 'your-deposit-address'}
+  )
+  ```
+  </CodeGroup>
+
+  <Check>
+  When the status shows `SUCCESS`, your tokens have been delivered to your destination address!
+  </Check>
 </Step>
 </Steps>
 
+## Understanding swap statuses
 
-### Step 1: Set up your local environment
+Your swap progresses through these states:
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+- **PENDING_DEPOSIT** - Waiting for your token deposit
+- **PROCESSING** - Deposit detected, market makers are executing your swap
+- **SUCCESS** - Tokens delivered to your destination address
+- **INCOMPLETE_DEPOSIT** - Deposit received but below required amount
+- **REFUNDED** - Swap failed, funds returned to your refund address
+- **FAILED** - Swap encountered an error
 
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+<Warning>
+If your swap status is `INCOMPLETE_DEPOSIT` or `REFUNDED`, check your refund address for returned funds.
+</Warning>
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
+<Card title="1Click API Reference" icon="code" href="/getting-started/quickstart-1click">
+  Explore the complete 1Click Swap API documentation with detailed examples.
 </Card>
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
+<Card title="Integrate into your app" icon="puzzle-piece" href="/intent-creators/examples">
+  Learn how to integrate NEAR Intents into wallets and applications.
 </Card>
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
+<Card title="View supported chains" icon="link" href="/resources/chain-support">
+  See all supported blockchains and tokens.
 </Card>
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
+<Card title="Understand fees" icon="dollar-sign" href="/resources/fees">
+  Learn about platform fees and how to obtain free API access.
 </Card>
-
 </CardGroup>
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+## Get help
+
+<AccordionGroup>
+<Accordion title="My swap is taking a long time">
+  - Check the blockchain explorer for your deposit transaction
+  - Verify the deposit address matches the quote response
+  - Allow up to 15 minutes for cross-chain processing
+  - Check the status endpoint for current swap state
+</Accordion>
+
+<Accordion title="Swap failed or was refunded">
+  - Verify you sent the exact amount specified in the quote
+  - Check your refund address for returned funds
+  - Ensure your destination address format is correct for the target chain
+  - Try requesting a new quote and executing again
+</Accordion>
+
+<Accordion title="Need more help?">
+  Contact our support team or join our community for assistance with your integration.
+</Accordion>
+</AccordionGroup>
