@@ -29,7 +29,29 @@
             "pages": [
               "integration/distribution-channels",
               "integration/market-makers",
-              "integration/verifier-smart-contract"
+              {
+                "group": "Verifier Contract",
+                "icon": "file-contract",
+                "pages": [
+                  "integration/verifier-contract/introduction",
+                  "integration/verifier-contract/account-abstraction",
+                  {
+                    "group": "Deposits & Withdrawals",
+                    "icon": "arrow-right-arrow-left",
+                    "pages": [
+                      "integration/verifier-contract/deposits-and-withdrawals/overview",
+                      "integration/verifier-contract/deposits-and-withdrawals/balances",
+                      "integration/verifier-contract/deposits-and-withdrawals/deposits",
+                      "integration/verifier-contract/deposits-and-withdrawals/withdrawals",
+                      "integration/verifier-contract/deposits-and-withdrawals/near-token"
+                    ]
+                  },
+                  "integration/verifier-contract/intent-types-and-execution",
+                  "integration/verifier-contract/signing-intents",
+                  "integration/verifier-contract/simulating-intents",
+                  "integration/verifier-contract/events"
+                ]
+              }
             ]
           },
           {

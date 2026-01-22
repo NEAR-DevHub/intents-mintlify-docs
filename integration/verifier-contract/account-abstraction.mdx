@@ -1,0 +1,129 @@
+---
+title: 'Account Abstraction'
+description: 'How the Verifier contract identifies users and manages account keys'
+icon: 'user-gear'
+---
+
+The Verifier contract identifies users via their NEAR `AccountId`, which can be either a Named or Implicit account.
+
+## Account types
+
+### Named accounts
+
+Named accounts look like `user.near`.
+
+The only way to start using a Named Account is to send a transaction calling `intents.near::add_public_key(pk)` from the user's NEAR wallet. Others can still deposit or transfer funds to you before you "claim" the account.
+
+### Implicit accounts
+
+Implicit accounts have a public key encoded in their names, so they can be used without any "claiming" from users.
+
+There is a 1-to-1 relationship between the account format and the corresponding signing curve type:
+
+| Curve | Account Format | Example |
+|-------|----------------|---------|
+| EdDSA | 64-character hex (Implicit NEAR) | `8c5cba35f5b4db9579c39175ad34a9275758eb29d4866f395ed1a5b5afcb9ffc` |
+| ECDSA | Ethereum-style address (Implicit Eth) | `0x85d456B2DfF1fd8245387C0BfB64Dfb700e98Ef3` |
+
+For example, users logging in with a Cosmos (ECDSA) wallet will have an *Implicit Eth address* in `intents.near`, whereas Solana or TON (EdDSA) wallets will yield *Implicit NEAR addresses*.
+
+<Info>
+It's not feasible to differentiate these addresses by chain, since only the signature and public key are known. Even when differentiating based on the signing standard (NEP-413, EIP-712), ambiguity remains when importing the same seed phrase into multiple wallets.
+</Info>
+
+## Account keys
+
+Once an account is created, you can add multiple public keys to authorize actions on that account. Each key has full control and can add or remove other keys—either directly via NEAR transactions or via signed intents.
+
+<Info>
+Public keys and signatures must use specific encoding formats depending on the curve type. See [Signing Intents](/integration/verifier-contract/signing-intents) for the full encoding requirements table.
+</Info>
+
+### Adding a public key via transaction
+
+Here is an [example transaction](https://nearblocks.io/txns/FBTRk6jRUSW3E1SjBfYbA71DhN5xTX1yE2foy98TafrM#execution) for adding a public key to a Named Account.
+
+You can do this manually with [near-cli](https://github.com/near/near-cli-rs):
+
+```bash
+near contract call-function as-transaction \
+  intents.near add_public_key json-args '{
+    "public_key": "ed25519:<base58>"
+  }' prepaid-gas '100.0 Tgas' attached-deposit '1 yoctoNEAR' \
+  sign-as <ACCOUNT_ID> network-config mainnet sign-with-keychain send
+```
+
+### Adding a public key via signed intent
+
+You can also submit a signed intent to add a public key:
+
+```json
+{
+  "signer_id": "<ACCOUNT_ID>",
+  "intents": [
+    {
+      "intent": "add_public_key",
+      "public_key": "<PUBLIC_KEY_OF_USER>"
+    }
+  ]
+}
+```
+
+## Authentication flow for frontends
+
+Users' wallets store their private keys and allow users to rotate them. For the Verifier to verify signatures, it needs to know which keys are associated with which "named" accounts. Therefore, `intents.near` maintains a mapping of `account_ids` to their `public_keys` (each account can have multiple public keys registered).
+
+### Step-by-step flow
+
+<Steps>
+  <Step title="Connect wallet">
+    When a user opens the frontend and clicks "Connect Wallet", the frontend prompts the user's wallet to `signMessage("Authenticate")`.
+
+    This returns:
+    - A signature
+    - The `public_key` (from a Full Access Key used to sign)
+    - The `account_id` the public key corresponds to
+
+    The frontend stores this `(account_id, public_key)` pair in browser local storage.
+  </Step>
+
+  <Step title="Check registration">
+    When the user wants to swap tokens (sign a `state_change`):
+
+    1. Check if the `(account_id, public_key)` pair is registered on-chain by calling:
+       ```
+       get_account_public_keys(account_id) -> Vec<Pubkey>
+       ```
+
+    2. If unregistered, ask the user's wallet to sign:
+       ```
+       signMessage("user1 is an owner of public_key ed25519:abcd...")
+       ```
+
+    3. Include this signed message in a transaction to `intents.near` calling:
+       ```
+       add_public_key({
+         "account_id": "user1",
+         "public_key": "ed25519:abcd...",
+         "signature": "xyz123..."
+       })
+       ```
+  </Step>
+
+  <Step title="Sign and submit intents">
+    The user's wallet signs the intent:
+    ```
+    signMessage({"account_id": "user1", "state_changes": [...]})
+    ```
+
+    This signature, along with the public key, is sent by a market maker to `intents.near`.
+
+    The Verifier validates the signature for the given public key and atomically checks whether the key is registered for that user.
+  </Step>
+</Steps>
+
+### Key rotation
+
+When a user removes a Full Access Key from their NEAR account, it should also be unregistered on `intents.near` by calling `remove_public_key(public_key)` from the user's NEAR account.
+
+This can be automated by adding a `FunctionalKey` to the user's account on NEAR and calling it whenever you detect that your user has deleted a key from their NEAR account on-chain.

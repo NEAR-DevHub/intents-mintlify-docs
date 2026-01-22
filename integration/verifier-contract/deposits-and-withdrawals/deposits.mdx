@@ -1,0 +1,82 @@
+---
+title: 'Deposits'
+description: 'How to deposit fungible and non-fungible tokens into the Verifier contract'
+icon: 'arrow-right-to-bracket'
+---
+
+## Depositing fungible tokens (NEP-141)
+
+The Verifier contract implements the [FungibleTokenReceiver](https://docs.near.org/primitives/ft) interface, part of the [NEP-141 standard](https://nomicon.io/Standards/Tokens/FungibleToken/Core).
+
+To deposit tokens, call `ft_transfer_call` ([function signature](https://github.com/near/near-sdk-rs/blob/611e01ebf6c226f4e1e820a2f50f4a9acf8f1215/examples/fungible-token/ft/src/lib.rs#L103)) on the token contract, with an `msg` parameter specifying who will own the tokens.
+
+### The `msg` parameter
+
+The `msg` parameter supports three formats:
+
+<Tabs>
+  <Tab title="Empty (default)">
+    Leave `msg` empty or omit it to assign ownership to the transaction sender.
+
+    ```json
+    {
+      "receiver_id": "intents.near",
+      "amount": "1000"
+    }
+    ```
+
+    Or explicitly empty:
+
+    ```json
+    {
+      "receiver_id": "intents.near",
+      "amount": "1000",
+      "msg": ""
+    }
+    ```
+  </Tab>
+
+  <Tab title="Account ID string">
+    Specify an account ID to assign ownership to a different account.
+
+    ```json
+    {
+      "receiver_id": "intents.near",
+      "amount": "1000",
+      "msg": "bob.near"
+    }
+    ```
+  </Tab>
+
+  <Tab title="DepositMessage object">
+    Use a JSON object for advanced options:
+
+    | Field | Description |
+    |-------|-------------|
+    | `receiver_id` | Account ID taking ownership |
+    | `execute_intents` | List of intents to execute after deposit |
+    | `refund_if_fails` | When `false` (default), executes intents as a detached promise, decoupling failures from the deposit |
+
+    ```json
+    {
+      "receiver_id": "intents.near",
+      "amount": "1000",
+      "msg": "{\"receiver_id\": \"charlie.near\", \"execute_intents\": [...], \"refund_if_fails\": false}"
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Warning>
+The `msg` field is always a string—even when it contains a JSON-encoded object. Proper character escaping is required.
+</Warning>
+
+## Depositing non-fungible tokens (NEP-171)
+
+The Verifier contract implements the [NonFungibleTokenReceiver](https://docs.near.org/primitives/nft) interface ([NEP-171](https://nomicon.io/Standards/Tokens/NonFungibleToken/Core) standard).
+
+To transfer NFTs to the Verifier, use `nft_transfer_call` with the same `msg` format rules as fungible tokens.
+
+## Depositing wrapped NEAR
+
+Since NEAR is the native blockchain token, it requires special handling. See [NEAR Token Treatment](/integration/verifier-contract/deposits-and-withdrawals/near-token) for details.

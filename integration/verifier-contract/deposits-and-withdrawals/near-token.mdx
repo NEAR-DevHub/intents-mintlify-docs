@@ -1,0 +1,36 @@
+---
+title: 'NEAR Token Treatment'
+description: 'How to handle native NEAR tokens in the Verifier contract'
+icon: 'coins'
+---
+
+Since NEAR is the native token for the NEAR blockchain, it requires special treatment. To streamline usage with other assets, NEAR is treated as a fungible token ([NEP-141](https://nomicon.io/Standards/Tokens/FungibleToken/Core)) using its wrapped form.
+
+## Wrapped NEAR (wNEAR)
+
+The wrapped NEAR token contract is deployed at [`wrap.near`](https://nearblocks.io/address/wrap.near). The source code can be found in the [NEAR core contracts repository](https://github.com/near/core-contracts/).
+
+## How to deposit NEAR
+
+<Warning>
+There is no way to deposit native NEAR directly into the Verifier contract.
+</Warning>
+
+To deposit NEAR, you must first wrap it:
+
+<Steps>
+  <Step title="Wrap your NEAR">
+    Exchange your native NEAR tokens for wrapped NEAR (wNEAR) using the `wrap.near` contract.
+  </Step>
+  <Step title="Deposit wNEAR">
+    Deposit the wNEAR tokens into the Verifier contract using `ft_transfer_call` as described in [Deposits](/integration/verifier-contract/deposits-and-withdrawals/deposits).
+  </Step>
+</Steps>
+
+## Token ID
+
+In the Verifier contract, wrapped NEAR is identified as:
+
+```
+nep141:wrap.near
+```

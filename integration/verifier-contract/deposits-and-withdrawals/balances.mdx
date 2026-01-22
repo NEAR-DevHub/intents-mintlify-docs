@@ -1,0 +1,92 @@
+---
+title: 'Balances and Token IDs'
+description: 'How to check your balance and identify tokens in the Verifier contract'
+icon: 'wallet'
+---
+
+This section explains how to check your token balance and how tokens are organized within the Verifier smart contract.
+
+## Multi Token Standard (NEP-245)
+
+After a successful deposit, the Verifier contract manages tokens using the [Multi Token Standard (NEP-245)](https://nomicon.io/Standards/Tokens/MultiToken/Core). This enables uniform handling of all supported token types.
+
+## Token ID format
+
+Each token is identified by a string-based token ID, prefixed with its standard type.
+
+| Token Type | Prefix | Example |
+|------------|--------|---------|
+| Fungible (NEP-141) | `nep141:` | `nep141:wrap.near` |
+| Non-fungible (NEP-171) | `nep171:` | `nep171:coolnfts.near:rock.near` |
+| Multi Token (NEP-245) | `nep245:` | `nep245:mygame.near:shield.near` |
+
+### Examples
+
+<AccordionGroup>
+  <Accordion title="Wrapped NEAR (NEP-141)">
+    Wrapped NEAR is a fungible token with contract ID `wrap.near`.
+
+    **Token ID in Verifier:** `nep141:wrap.near`
+  </Accordion>
+
+  <Accordion title="NFT (NEP-171)">
+    An NFT from collection `coolnfts.near` with token ID `rock.near`.
+
+    **Token ID in Verifier:** `nep171:coolnfts.near:rock.near`
+  </Accordion>
+
+  <Accordion title="Multi Token (NEP-245)">
+    A game token from contract `mygame.near` with token ID `shield.near`.
+
+    **Token ID in Verifier:** `nep245:mygame.near:shield.near`
+  </Accordion>
+</AccordionGroup>
+
+## Checking your balance
+
+After a successful deposit, query your balance using [mt_balance_of](https://near.github.io/intents/defuse_nep245/trait.MultiTokenCore.html#tymethod.mt_balance_of), which adheres to the NEP-245 standard.
+
+### Parameters
+
+```json
+{
+  "account_id": "alice.near",
+  "token_id": "nep141:wrap.near"
+}
+```
+
+### Using near-cli
+
+```bash
+near contract call-function as-read-only intents.near mt_balance_of \
+  json-args '{ "account_id": "alice.near", "token_id": "nep141:wrap.near" }' \
+  network-config mainnet now
+```
+
+### Batch balance query
+
+To check multiple token balances at once, use `mt_batch_balance_of`:
+
+```bash
+near contract call-function as-read-only intents.near mt_batch_balance_of \
+  json-args '{
+    "account_id": "alice.near",
+    "token_ids": [
+      "nep141:wrap.near",
+      "nep141:usdt.tether-token.near"
+    ]
+  }' network-config mainnet now
+```
+
+Response:
+
+```json
+[
+  "3000004000004000006",
+  "10"
+]
+```
+
+<Info>
+Balances are returned in the smallest unit of each token (e.g., yoctoNEAR for wrapped NEAR).
+</Info>
