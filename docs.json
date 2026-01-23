@@ -28,7 +28,23 @@
             "group": "Integration",
             "pages": [
               "integration/distribution-channels",
-              "integration/market-makers",
+              {
+                "group": "Market Makers",
+                "icon": "chart-line",
+                "pages": [
+                  "integration/market-makers/introduction",
+                  {
+                    "group": "Message Bus",
+                    "icon": "message",
+                    "pages": [
+                      "integration/market-makers/message-bus/introduction",
+                      "integration/market-makers/message-bus/api",
+                      "integration/market-makers/message-bus/usage-examples"
+                    ]
+                  },
+                  "integration/market-makers/deposit-withdrawal-service"
+                ]
+              },
               {
                 "group": "Verifier Contract",
                 "icon": "file-contract",

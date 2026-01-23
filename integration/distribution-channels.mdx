@@ -1,5 +1,151 @@
 ---
 title: 'Distribution Channels'
-description: 'Preview changes locally to update your docs'
+description: 'Build user-facing applications powered by NEAR Intents'
 icon: 'window'
 ---
+
+Distribution Channels are the user-facing applications, wallets, and exchanges that make NEAR Intents accessible to end users. They handle intent creation, management, and asset delivery, while [Market Makers](/integration/market-makers/introduction) handle fulfillment and pricing.
+
+## What is a Distribution Channel?
+
+A distribution channel is any application that helps users create and execute intents:
+
+- **Wallets** - Let users swap tokens directly from their wallet interface
+- **DEX aggregators** - Route trades through NEAR Intents for better pricing
+- **DApps** - Integrate cross-chain swaps into your application
+- **Exchanges** - Offer intent-based trading to your users
+
+## Integration options
+
+<CardGroup cols={2}>
+  <Card title="1Click Swap API" icon="bolt" href="/api-reference/introduction">
+    **Recommended for most integrations**
+
+    REST API that abstracts intent creation, solver coordination, and transaction execution. Get started in minutes.
+  </Card>
+
+  <Card title="Direct Integration" icon="code" href="/integration/verifier-contract/introduction">
+    **For advanced use cases**
+
+    Interact directly with the Verifier smart contract for full control over intent creation and execution.
+  </Card>
+</CardGroup>
+
+## 1Click Swap API
+
+The fastest way to integrate NEAR Intents. The 1Click API handles all the complexity:
+
+- **Simple REST endpoints** for intent creation and management
+- **Automatic solver discovery** and competitive pricing
+- **Built-in transaction handling** and status tracking
+- **Cross-chain support** for seamless multi-chain swaps
+
+### How it works
+
+```
+┌─────────────────┐     1. Request quote      ┌─────────────────┐
+│   Your App      │ ────────────────────────▶ │   1Click API    │
+│                 │                           │                 │
+│                 │ ◀──────────────────────── │                 │
+└─────────────────┘     Quote + deposit addr  └─────────────────┘
+        │                                              │
+        │ 2. User deposits                             │
+        │    to address                                │
+        ▼                                              ▼
+┌─────────────────┐                           ┌─────────────────┐
+│  Source Chain   │                           │  Market Makers  │
+│  (ETH, BTC...)  │                           │  execute swap   │
+└─────────────────┘                           └─────────────────┘
+                                                       │
+                                                       │ 3. Tokens delivered
+                                                       ▼
+                                              ┌─────────────────┐
+                                              │  Destination    │
+                                              │  (user wallet)  │
+                                              └─────────────────┘
+```
+
+### Quick start
+
+<Steps>
+  <Step title="Get an API key">
+    Register on the [Partner Dashboard](https://partners.near-intents.org/) to get your JWT token. Authenticated requests avoid the 0.1% platform fee.
+  </Step>
+
+  <Step title="Request a quote">
+    Call the [`/v0/quote`](/api-reference/endpoint/quote) endpoint with the user's swap details. You'll receive pricing and a unique deposit address.
+  </Step>
+
+  <Step title="User deposits tokens">
+    The user sends tokens to the deposit address. 1Click automatically begins the swap.
+  </Step>
+
+  <Step title="Monitor status">
+    Optionally poll [`/v0/status`](/api-reference/endpoint/status) to track progress and display updates to your user.
+  </Step>
+</Steps>
+
+**Result:** Tokens are delivered to the user's destination address, or automatically refunded if the swap fails.
+
+### SDKs
+
+Pre-built SDKs for quick integration:
+
+<CardGroup cols={3}>
+  <Card title="TypeScript" icon="js" href="https://github.com/defuse-protocol/one-click-sdk-typescript">
+    npm package
+  </Card>
+  <Card title="Go" icon="golang" href="https://github.com/defuse-protocol/one-click-sdk-go">
+    Go module
+  </Card>
+  <Card title="Rust" icon="rust" href="https://github.com/defuse-protocol/one-click-sdk-rs">
+    Cargo crate
+  </Card>
+</CardGroup>
+
+## Earning fees
+
+Distribution channels can earn fees on every swap. Configure fee collection when requesting quotes:
+
+```json
+{
+  "appFees": {
+    "recipient": "your-wallet.near",
+    "fee_bps": 50
+  }
+}
+```
+
+This charges a 0.5% fee (50 basis points) from the input token, sent to your wallet.
+
+For high-volume integrations, use [fee aggregation](/api-reference/fee-config#fee-aggregation) to automatically convert all fees into a single token.
+
+<Card title="Fee Configuration Guide" icon="wallet" href="/api-reference/fee-config">
+  Learn how to configure and collect fees from your integration
+</Card>
+
+## API Reference
+
+<CardGroup cols={2}>
+  <Card title="1Click API Overview" icon="book" href="/api-reference/introduction">
+    Complete API documentation and swap statuses
+  </Card>
+  <Card title="Authentication" icon="key" href="/api-reference/authentication">
+    Get your API key and authentication setup
+  </Card>
+  <Card title="Fee Configuration" icon="wallet" href="/api-reference/fee-config">
+    Configure fee collection and aggregation
+  </Card>
+  <Card title="Explorer API" icon="magnifying-glass" href="/api-reference/explorer/introduction">
+    Query historical swap data
+  </Card>
+</CardGroup>
+
+## Example integration
+
+See a complete example in the [near-intents-examples](https://github.com/near-examples/near-intents-examples) repository, which demonstrates:
+
+- Requesting quotes
+- Handling deposits
+- Monitoring swap status
+- Error handling and refunds

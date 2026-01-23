@@ -10,6 +10,10 @@ Execute a cross-chain token swap using the 1Click Swap API. You'll swap tokens f
 **Prerequisites**: A small amount of tokens on a [supported chain](/resources/chain-support). Start with a test amount ($10-50) for your first swap.
 </Info>
 
+<Tip>
+For TypeScript projects, consider using the [official SDK](https://github.com/defuse-protocol/one-click-sdk-typescript) which provides type-safe methods and cleaner code. See the [example repository](https://github.com/near-examples/near-intents-examples) for a complete implementation.
+</Tip>
+
 ## How It Works
 
 Instead of navigating multiple bridges and DEXs, NEAR Intents lets you specify what you want (e.g., "swap 0.1 NEAR for ARB on Arbitrum") and competitive market makers race to give you the best execution:
@@ -59,14 +63,17 @@ curl -X POST https://1click.chaindefuser.com/v0/quote \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
     "dry": false,
-    "swapType": "EXACT_IN",
+    "swapType": "EXACT_INPUT",
+    "slippageTolerance": 100,
     "originAsset": "nep141:wrap.near",
+    "depositType": "ORIGIN_CHAIN",
     "destinationAsset": "nep141:arb-0x912ce59144191c1204e64559fe8253a0e49e6548.omft.near",
     "amount": "100000000000000000000000",
     "recipient": "0xYourArbitrumAddress",
     "recipientType": "DESTINATION_CHAIN",
     "refundTo": "your-account.near",
-    "refundType": "INTENTS"
+    "refundType": "ORIGIN_CHAIN",
+    "deadline": "2025-01-01T00:00:00.000Z"
   }'
 ```
 
@@ -79,14 +86,17 @@ const quote = await fetch('https://1click.chaindefuser.com/v0/quote', {
   },
   body: JSON.stringify({
     dry: false,
-    swapType: 'EXACT_IN',
+    swapType: 'EXACT_INPUT',
+    slippageTolerance: 100,
     originAsset: 'nep141:wrap.near',
+    depositType: 'ORIGIN_CHAIN',
     destinationAsset: 'nep141:arb-0x912ce59144191c1204e64559fe8253a0e49e6548.omft.near',
     amount: '100000000000000000000000',
     recipient: '0xYourArbitrumAddress',
     recipientType: 'DESTINATION_CHAIN',
     refundTo: 'your-account.near',
-    refundType: 'INTENTS'
+    refundType: 'ORIGIN_CHAIN',
+    deadline: new Date(Date.now() + 3 * 60 * 1000).toISOString()
   })
 });
 const result = await quote.json();
@@ -94,6 +104,7 @@ const result = await quote.json();
 
 ```python Python
 import requests
+from datetime import datetime, timedelta
 
 quote = requests.post(
   'https://1click.chaindefuser.com/v0/quote',
@@ -103,14 +114,17 @@ quote = requests.post(
   },
   json={
     'dry': False,
-    'swapType': 'EXACT_IN',
+    'swapType': 'EXACT_INPUT',
+    'slippageTolerance': 100,
     'originAsset': 'nep141:wrap.near',
+    'depositType': 'ORIGIN_CHAIN',
     'destinationAsset': 'nep141:arb-0x912ce59144191c1204e64559fe8253a0e49e6548.omft.near',
     'amount': '100000000000000000000000',
     'recipient': '0xYourArbitrumAddress',
     'recipientType': 'DESTINATION_CHAIN',
     'refundTo': 'your-account.near',
-    'refundType': 'INTENTS'
+    'refundType': 'ORIGIN_CHAIN',
+    'deadline': (datetime.now() + timedelta(minutes=3)).isoformat() + 'Z'
   }
 )
 result = quote.json()
@@ -125,14 +139,17 @@ Set `dry: true` to preview pricing without generating a deposit address. Set `dr
 
 | Parameter | Description |
 |-----------|-------------|
-| `swapType` | `EXACT_IN` (specify input amount) or `EXACT_OUT` (specify output amount) |
+| `swapType` | `EXACT_INPUT` (specify input amount) or `EXACT_OUTPUT` (specify output amount) |
+| `slippageTolerance` | Maximum acceptable slippage in basis points (100 = 1%) |
 | `originAsset` | Source token `assetId` from the tokens endpoint |
+| `depositType` | `ORIGIN_CHAIN` (deposit on source chain) or `INTENTS` (already in Verifier contract) |
 | `destinationAsset` | Target token `assetId` from the tokens endpoint |
 | `amount` | Amount in smallest unit (wei, yoctoNEAR, etc.) |
 | `recipient` | Address to receive swapped tokens |
-| `recipientType` | `DESTINATION_CHAIN` (native address) or `INTENTS` (NEAR account) |
+| `recipientType` | `DESTINATION_CHAIN` (native address) or `INTENTS` (NEAR Intents account) |
 | `refundTo` | Address for refunds if swap fails |
-| `refundType` | `DESTINATION_CHAIN` or `INTENTS` |
+| `refundType` | `ORIGIN_CHAIN` or `INTENTS` |
+| `deadline` | Quote expiration timestamp in ISO format |
 </Step>
 
 <Step title="Send tokens">
@@ -205,11 +222,16 @@ status = requests.get(
 | Status | Description |
 |--------|-------------|
 | `PENDING_DEPOSIT` | Awaiting your token deposit |
-| `PROCESSING` | Deposit detected, swap being executed |
+| `KNOWN_DEPOSIT_TX` | Deposit transaction detected |
+| `PROCESSING` | Swap being executed |
 | `SUCCESS` | Tokens delivered to destination address |
 | `INCOMPLETE_DEPOSIT` | Deposit below required amount |
 | `REFUNDED` | Swap failed, funds returned to refund address |
 | `FAILED` | Swap encountered an error |
+
+<Tip>
+View detailed transaction info on the [NEAR Intents Explorer](https://explorer.near-intents.org) by searching for your deposit address.
+</Tip>
 </Step>
 </Steps>
 
@@ -231,11 +253,11 @@ See the [Authentication guide](/api-reference/authentication) for details.
 </Card>
 
 <Card title="Example Repository" icon="github" href="https://github.com/near-examples/near-intents-examples">
-  Working TypeScript implementation
+  Working TypeScript implementation with SDK
 </Card>
 
-<Card title="Supported Chains" icon="link" href="/resources/chain-support">
-  All supported blockchains and tokens
+<Card title="NEAR Intents Explorer" icon="magnifying-glass" href="https://explorer.near-intents.org">
+  Track transactions and view swap history
 </Card>
 
 <Card title="Fee Configuration" icon="wallet" href="/api-reference/fee-config">

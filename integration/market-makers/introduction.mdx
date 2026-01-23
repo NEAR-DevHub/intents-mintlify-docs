@@ -1,0 +1,89 @@
+---
+title: 'Introduction'
+description: 'How to integrate NEAR Intents as a market maker'
+icon: 'sparkles'
+---
+
+Market makers are active participants who deposit liquidity to fill quotes issued by users. To start market making on NEAR Intents, you need to handle two core functions: **bridging** (deposits/withdrawals) and **quoting**.
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- A NEAR account for signing intents
+- Liquidity to deposit (tokens on supported chains)
+- Infrastructure to run a quoting service (WebSocket client)
+- Familiarity with [the Verifier contract](/integration/verifier-contract/introduction) and [intent signing](/integration/verifier-contract/signing-intents)
+
+## Getting started
+
+<Steps>
+  <Step title="Deposit liquidity">
+    Use the [Passive Deposit/Withdrawal Service](/integration/market-makers/deposit-withdrawal-service) to move funds from supported blockchains into NEAR Intents.
+
+    Alternatively, deposit via distribution channels like [near-intents.org](https://near-intents.org/).
+  </Step>
+
+  <Step title="Connect to the Message Bus">
+    Connect to the [Message Bus WebSocket](/integration/market-makers/message-bus/api) to receive quote requests from users in real-time.
+  </Step>
+
+  <Step title="Respond to quotes">
+    When you receive a quote request, evaluate the trade and respond with a signed intent if you want to fill it.
+
+    See [Usage Examples](/integration/market-makers/message-bus/usage-examples) for implementation details.
+  </Step>
+
+  <Step title="Monitor settlements">
+    Subscribe to quote status events to track when your quotes are matched and settled on-chain.
+  </Step>
+</Steps>
+
+## Architecture overview
+
+```
+┌─────────────┐     quote request      ┌─────────────┐
+│    User     │ ───────────────────▶   │  Message    │
+│  Frontend   │                        │    Bus      │
+└─────────────┘   ◀───────────────────  └─────────────┘
+                     quote response           │
+                                              │ WebSocket
+                                              ▼
+                                      ┌─────────────┐
+                                      │   Market    │
+                                      │   Maker     │
+                                      └─────────────┘
+                                              │
+                                              │ signed intent
+                                              ▼
+                                      ┌─────────────┐
+                                      │  Verifier   │
+                                      │  Contract   │
+                                      └─────────────┘
+```
+
+The Message Bus facilitates price discovery by:
+1. Broadcasting quote requests from users to connected market makers
+2. Collecting signed intent responses from market makers
+3. Bundling matching intents and submitting them to the Verifier contract
+
+<Info>
+The NEAR Intents protocol can operate without the Message Bus. Frontends can use other quoting mechanisms, and market makers can index the NEAR blockchain directly to find intents to fill.
+</Info>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Message Bus" icon="message" href="/integration/market-makers/message-bus/introduction">
+    Learn about the Message Bus architecture and how it works
+  </Card>
+  <Card title="Message Bus API" icon="code" href="/integration/market-makers/message-bus/api">
+    Connect to the WebSocket and start receiving quote requests
+  </Card>
+  <Card title="Usage Examples" icon="book-open" href="/integration/market-makers/message-bus/usage-examples">
+    See TypeScript examples for responding to quotes
+  </Card>
+  <Card title="Deposit/Withdrawal" icon="arrow-right-arrow-left" href="/integration/market-makers/deposit-withdrawal-service">
+    Move liquidity in and out of NEAR Intents
+  </Card>
+</CardGroup>

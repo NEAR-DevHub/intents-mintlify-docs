@@ -1,0 +1,46 @@
+---
+title: 'Message Bus'
+description: 'Off-chain message bus for communication between market makers and users'
+icon: 'message'
+---
+
+The Message Bus is a system component that optimizes price discovery between users and market makers. It handles communication and submits settlement transactions to the Verifier contract.
+
+<Frame>
+  <img src="https://github.com/user-attachments/assets/fc27dde0-7a3d-428e-9776-8743aa6b43a5" alt="Message Bus Architecture" />
+</Frame>
+
+## How it works
+
+1. **User requests a quote** - A frontend sends a quote request to the Message Bus
+2. **Market makers receive the request** - The Message Bus broadcasts the request to all connected solvers via WebSocket
+3. **Market makers respond** - Solvers evaluate the trade and respond with signed intents
+4. **User accepts a quote** - The frontend displays options to the user, who selects and signs their intent
+5. **Settlement** - The Message Bus bundles the matching intents and submits them to the Verifier contract
+
+## Optional component
+
+<Info>
+The NEAR Intents protocol can operate without the Message Bus:
+
+- **Frontends** can use any quoting mechanism to compose and publish signed intents
+- **Market makers** can index the NEAR blockchain directly to find intents to fill
+</Info>
+
+## Endpoints
+
+| Type | Endpoint |
+|------|----------|
+| JSON-RPC (Frontend) | `https://solver-relay-v2.chaindefuser.com/rpc` |
+| WebSocket (Solvers) | `wss://solver-relay-v2.chaindefuser.com/ws` |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="code" href="/integration/market-makers/message-bus/api">
+    Full API documentation for the Message Bus
+  </Card>
+  <Card title="Usage Examples" icon="book-open" href="/integration/market-makers/message-bus/usage-examples">
+    TypeScript examples for implementing a solver
+  </Card>
+</CardGroup>

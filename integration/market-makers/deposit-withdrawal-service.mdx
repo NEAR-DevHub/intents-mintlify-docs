@@ -1,0 +1,322 @@
+---
+title: 'Deposit/Withdrawal Service'
+description: 'Move assets between supported blockchains and NEAR Intents'
+icon: 'arrow-right-arrow-left'
+---
+
+The Passive Deposit/Withdrawal Service enables seamless asset movement between [supported blockchain networks](/resources/chain-support) and NEAR Intents. It provides a lightweight mechanism for moving tokens in and out of the protocol.
+
+<Info>
+There is an SDK for integrating this service: [Bridge SDK on GitHub](https://github.com/defuse-protocol/sdk-monorepo/tree/main/packages/bridge-sdk). This SDK is under active development and may introduce breaking changes.
+</Info>
+
+## How it works
+
+<Steps>
+  <Step title="Get supported assets">
+    Query the service for the list of supported tokens and networks.
+  </Step>
+  <Step title="Get a deposit address">
+    Request a deposit address for your target chain and NEAR account.
+  </Step>
+  <Step title="Transfer tokens">
+    Send tokens to the deposit address. They will appear in your NEAR Intents account.
+  </Step>
+  <Step title="Monitor status">
+    Check deposit and withdrawal status via the API.
+  </Step>
+</Steps>
+
+## JSON-RPC Endpoint
+
+**POST:** `https://bridge.chaindefuser.com/rpc`
+
+---
+
+## API Reference
+
+### supported_tokens
+
+Returns a list of tokens supported by the service for each network.
+
+<ParamField body="chains" type="string[]">
+  Optional chain filter (e.g., `["eth:1", "btc:mainnet"]`)
+</ParamField>
+
+<Accordion title="Response fields">
+  For each token:
+  - `defuse_asset_identifier` - Unique asset ID (format: `CHAIN_TYPE:CHAIN_ID:ADDRESS`)
+  - `near_token_id` - Token ID in the NEAR blockchain
+  - `decimals` - Token precision
+  - `asset_name` - Token name
+  - `min_deposit_amount` - Minimum amount to trigger transfer
+  - `min_withdrawal_amount` - Minimum amount for withdrawal
+  - `withdrawal_fee` - Fee charged for withdrawals
+</Accordion>
+
+```json Request
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "supported_tokens",
+  "params": [
+    {
+      "chains": ["eth:8453"]
+    }
+  ]
+}
+```
+
+```json Response
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "tokens": [
+      {
+        "defuse_asset_identifier": "eth:8453:0x123",
+        "near_token_id": "...",
+        "decimals": 18,
+        "asset_name": "PEPE",
+        "min_deposit_amount": "100000",
+        "min_withdrawal_amount": "10000",
+        "withdrawal_fee": "1000"
+      }
+    ]
+  }
+}
+```
+
+### deposit_address
+
+Returns the address for depositing supported tokens or native currency.
+
+<ParamField body="account_id" type="string" required>
+  Your NEAR Intents account (e.g., `user.near`)
+</ParamField>
+
+<ParamField body="chain" type="string" required>
+  Network type and chain ID (e.g., `eth:42161` for Arbitrum, `btc:mainnet` for Bitcoin)
+</ParamField>
+
+```json Request
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "deposit_address",
+  "params": [
+    {
+      "account_id": "user.near",
+      "chain": "eth:42161"
+    }
+  ]
+}
+```
+
+```json Response
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "address": "0x...",
+    "chain": "eth:42161"
+  }
+}
+```
+
+### recent_deposits
+
+Returns information on recent deposits for an account.
+
+<ParamField body="account_id" type="string" required>
+  Your NEAR Intents account
+</ParamField>
+
+<ParamField body="chain" type="string" required>
+  Network type and chain ID
+</ParamField>
+
+<Accordion title="Response fields">
+  For each deposit:
+  - `tx_hash` - Transaction hash (EVM networks only)
+  - `chain` - Network type and chain ID
+  - `defuse_asset_identifier` - Token identifier
+  - `decimals` - Token decimals
+  - `amount` - Asset amount
+  - `account_id` - NEAR Intents account
+  - `address` - Deposit address
+  - `status` - `COMPLETED`, `PENDING`, or `FAILED`
+</Accordion>
+
+```json Request
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "recent_deposits",
+  "params": [
+    {
+      "account_id": "user.near",
+      "chain": "eth:42161"
+    }
+  ]
+}
+```
+
+```json Response
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "deposits": [
+      {
+        "tx_hash": "0x...",
+        "chain": "eth:42161",
+        "defuse_asset_identifier": "eth:42161:0x123",
+        "decimals": 18,
+        "amount": "10000000000",
+        "account_id": "user.near",
+        "address": "0x123",
+        "status": "COMPLETED"
+      }
+    ]
+  }
+}
+```
+
+### withdrawal_status
+
+Returns the status of a withdrawal.
+
+<ParamField body="withdrawal_hash" type="string" required>
+  Hash of the NEAR transaction where `ft_burn` event occurred
+</ParamField>
+
+<Accordion title="Response fields">
+  - `status` - `COMPLETED`, `PENDING`, `FAILED`, `NOT_FOUND`, `AWAITING`, `REJECTED`, `RETURNING`, or `RETURNED`
+  - `data.tx_hash` - Burn transaction hash on NEAR
+  - `data.transfer_tx_hash` - Transfer transaction hash on destination chain
+  - `data.chain` - Network type and chain ID
+  - `data.defuse_asset_identifier` - Token identifier
+  - `data.decimals` - Token decimals
+  - `data.amount` - Asset amount
+  - `data.account_id` - User account
+  - `data.address` - Withdrawal address
+</Accordion>
+
+```json Request
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "withdrawal_status",
+  "params": [
+    {
+      "withdrawal_hash": "8yFNEk7GmRcM3NMJihwCKXt8ZANLpL2koVFWWH1MEEj"
+    }
+  ]
+}
+```
+
+```json Response
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "status": "COMPLETED",
+    "data": {
+      "tx_hash": "8yFNEk7GmRcM3NMJihwCKXt8ZANLpL2koVFWWH1MEEj",
+      "transfer_tx_hash": "0x...",
+      "chain": "eth:42161",
+      "defuse_asset_identifier": "eth:42161:0x123",
+      "decimals": 18,
+      "amount": "10000000000",
+      "account_id": "user.near",
+      "address": "0x123"
+    }
+  }
+}
+```
+
+### notify_deposit
+
+Optional method to notify the service about your deposit for faster processing.
+
+<ParamField body="deposit_address" type="string" required>
+  Address you received from the API
+</ParamField>
+
+<ParamField body="tx_hash" type="string" required>
+  Hash of your deposit transaction
+</ParamField>
+
+```json Request
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "notify_deposit",
+  "params": [
+    {
+      "deposit_address": "0x...",
+      "tx_hash": "0x..."
+    }
+  ]
+}
+```
+
+### withdrawal_estimate
+
+Estimate fees for a withdrawal transaction.
+
+<ParamField body="chain" type="string" required>
+  Blockchain network (e.g., `eth:1`)
+</ParamField>
+
+<ParamField body="token" type="string" required>
+  Token identifier (e.g., `eth.omft.near`)
+</ParamField>
+
+<ParamField body="address" type="string" required>
+  Recipient address
+</ParamField>
+
+<Accordion title="Response fields">
+  - `tokenAddress` - Token contract address
+  - `userAddress` - User's address
+  - `withdrawalFee` - Estimated fee
+  - `withdrawalFeeDecimals` - Fee decimal precision
+  - `token` - Token information
+</Accordion>
+
+```json Request
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "withdrawal_estimate",
+  "params": [
+    {
+      "chain": "eth:1",
+      "token": "eth.omft.near",
+      "address": "0x456def..."
+    }
+  ]
+}
+```
+
+```json Response
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "tokenAddress": "0x123abc...",
+    "userAddress": "0x456def...",
+    "withdrawalFee": "12500000000000000",
+    "withdrawalFeeDecimals": 18,
+    "token": {
+      "defuse_asset_identifier": "0x123abc...",
+      "near_token_id": "eth.omft.near",
+      "decimals": 18,
+      "asset_name": "ETH",
+      "min_deposit_amount": "0.001"
+    }
+  }
+}
+```

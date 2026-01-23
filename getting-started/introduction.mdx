@@ -1,14 +1,14 @@
 ---
 title: "Introduction"
-description: "A multichain transaction protocol that lets users specify outcomes while market makers compete for the best execution"
+description: "A multichain transaction protocol where users specify desired outcomes and market makers compete for best execution"
 icon: 'sparkles'
 ---
 
 ## What is NEAR Intents?
 
-{/* ![NEAR Intents Overview](/images/near-intents-overview.png) */}
+NEAR Intents is a multichain transaction protocol that simplifies cross-chain interactions. Instead of navigating complex bridges, DEXs, and liquidity pools yourself, you simply declare your desired outcome and competitive market makers handle the rest.
 
-NEAR Intents is a revolutionary multichain transaction protocol that simplifies cross-chain interactions. Instead of navigating complex bridges, DEXs, and liquidity pools yourself, you simply declare your desired outcome and competitive market makers handle the rest.
+**An intent is a declaration of what you want, not how to do it.** Rather than constructing specific transactions across multiple chains, you express your goal: "I have 1 ETH on Ethereum, I want USDC on Arbitrum." Market makers compete to fulfill your intent, and smart contracts guarantee atomic execution.
 
 ## How it works
 
@@ -22,7 +22,7 @@ NEAR Intents is a revolutionary multichain transaction protocol that simplifies 
 </Step>
 
 <Step title="Smart contracts verify">
-  The NEAR Intents protocol ensures atomic execution your swap either completes fully or you're automatically refunded.
+  The NEAR Intents protocol ensures atomic execution—your swap either completes fully or you're automatically refunded.
 </Step>
 
 <Step title="You receive your tokens">
@@ -90,11 +90,37 @@ NEAR Intents is a revolutionary multichain transaction protocol that simplifies 
 
 NEAR Intents consists of three core components working together:
 
+```
+┌─────────────────────┐          ┌─────────────────────┐
+│  Distribution       │  intent  │                     │
+│  Channels           │─────────▶│    Message Bus      │
+│  (wallets, dApps)   │          │                     │
+└─────────────────────┘          └──────────┬──────────┘
+                                            │ broadcast
+                                            ▼
+                                 ┌─────────────────────┐
+                                 │   Market Makers     │
+                                 │   (compete to fill) │
+                                 └──────────┬──────────┘
+                                            │ signed intents
+                                            ▼
+                                 ┌─────────────────────┐
+                                 │  Verifier Contract  │
+                                 │  (NEAR blockchain)  │
+                                 └──────────┬──────────┘
+                                            │ atomic settlement
+                                            ▼
+                                 ┌─────────────────────┐
+                                 │  Tokens delivered   │
+                                 │  to destination     │
+                                 └─────────────────────┘
+```
+
 | Component | Role | Learn More |
 |-----------|------|------------|
-| **Distribution Channels** | Applications (wallets, exchanges, dApps) that enable users to create and broadcast intents | [Integration Guide](/intent-creators/examples) |
-| **Market Makers** | Agents that compete to fulfill intents, providing liquidity and execution | [Become a Market Maker](/essentials/markdown) |
-| **Verifier Smart Contract** | On-chain verification and settlement layer deployed on NEAR Protocol | [Technical Reference](/essentials/code) |
+| **Distribution Channels** | Applications (wallets, exchanges, dApps) that enable users to create and broadcast intents | [Integration Guide](/integration/distribution-channels) |
+| **Market Makers** | Agents that compete to fulfill intents, providing liquidity and execution | [Become a Market Maker](/integration/market-makers/introduction) |
+| **Verifier Contract** | On-chain verification and settlement layer deployed on NEAR Protocol | [Technical Reference](/integration/verifier-contract/introduction) |
 
 <Info>
 **Recently renamed**: NEAR Intents was previously known as "Defuse". While documentation is being updated, you may see references to both names.
@@ -106,14 +132,14 @@ Choose your path based on your role:
 
 <CardGroup cols={2}>
 <Card title="Execute your first swap" icon="rocket" href="/getting-started/quickstart">
-  Complete your first cross-chain token swap in under 5 minutes using the 1Click API.
+  Complete your first cross-chain token swap using the 1Click API.
 </Card>
 
-<Card title="Integrate into your app" icon="code" href="/intent-creators/examples">
-  Add NEAR Intents to your wallet, exchange, or dApp with our integration examples.
+<Card title="Build a distribution channel" icon="code" href="/integration/distribution-channels">
+  Add NEAR Intents to your wallet, exchange, or dApp with our integration guide.
 </Card>
 
-<Card title="Become a market maker" icon="chart-network" href="/essentials/markdown">
+<Card title="Become a market maker" icon="chart-network" href="/integration/market-makers/introduction">
   Learn how to provide liquidity and fulfill user intents profitably.
 </Card>
 
