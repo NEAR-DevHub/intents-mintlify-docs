@@ -29,7 +29,7 @@
             "pages": [
               {
                 "group": "Distribution Channels",
-                "icon": "window",
+                "icon": "objects-column",
                 "pages": [
                   "integration/distribution-channels/introduction",
                   {
@@ -62,7 +62,7 @@
               },
               {
                 "group": "Verifier Contract",
-                "icon": "file-contract",
+                "icon": "badge-check",
                 "pages": [
                   "integration/verifier-contract/introduction",
                   "integration/verifier-contract/account-abstraction",

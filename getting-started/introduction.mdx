@@ -1,18 +1,20 @@
 ---
-title: "Introduction"
-description: "Swap tokens across any blockchain with a single request. Use your existing wallet on any chain."
+title: "NEAR Intents"
+sidebarTitle: 'Introduction'
+description: "A multi-chain transaction protocol where users specify desired outcomes and market makers compete for best execution."
 icon: 'book-open'
 ---
+
+![NEAR Intents Architecture](/images/diagrams/intents-overview.svg)
 
 ## What is NEAR Intents?
 
 NEAR Intents is a multichain transaction protocol where users specify desired outcomes and market makers compete for best execution.
 
-**An intent is what you want, not how to get it.** Instead of manually bridging, wrapping, swapping, and bridging again—just say: "I have 1 ETH on Ethereum, I want USDC on Arbitrum." Market makers compete to fulfill your intent, and smart contracts guarantee atomic execution.
+**An intent is what you want, not how to get it.** Instead of manually bridging, wrapping, swapping, and bridging again... Just say: _"I have 1 ETH on Ethereum, I want USDC on Arbitrum."_ 
+Market makers compete to fulfill your intent, and smart contracts guarantee atomic execution.
 
 ## How it works
-
-![NEAR Intents Architecture](/images/diagrams/intents-overview.svg)
 
 <Steps>
 <Step title="You create an intent">
@@ -24,7 +26,7 @@ NEAR Intents is a multichain transaction protocol where users specify desired ou
 </Step>
 
 <Step title="Smart contracts verify">
- Approved quotes are submitted to a smart contract on the NEAR blockchain ensuring atomic execution; your swap either completes fully or you're automatically refunded.
+ Approved quotes are submitted to a smart contract ensuring atomic execution; your swap either completes fully or you're automatically refunded.
 </Step>
 
 <Step title="You receive your tokens">
@@ -96,8 +98,6 @@ NEAR Intents is a multichain transaction protocol where users specify desired ou
 </Tab>
 </Tabs>
 
-## 
-
 <Info>
 **Recently renamed**: NEAR Intents was previously known as "Defuse". While documentation is being updated, you may see references to both names.
 </Info>
@@ -115,7 +115,7 @@ Choose your path based on your role:
   Add NEAR Intents to your wallet, exchange, or dApp with our integration guide.
 </Card>
 
-<Card title="Become a market maker" icon="chart-network" href="/integration/market-makers/introduction">
+<Card title="Become a market maker" icon="users" href="/integration/market-makers/introduction">
   Learn how to provide liquidity and fulfill user intents profitably.
 </Card>
 
