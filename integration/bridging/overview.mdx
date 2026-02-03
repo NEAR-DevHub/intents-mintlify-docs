@@ -9,6 +9,10 @@ icon: 'magnifying-glass'
 
 NEAR Intents uses multiple bridges to move assets between the Verifier contract and external blockchains. Each bridge handles a different set of chains and has its own trust model. When a [withdrawal](/integration/verifier-contract/deposits-and-withdrawals/withdrawals) is executed, the protocol selects the appropriate bridge based on the destination chain.
 
+<Tip>
+The [Deposit/Withdrawal Service](/integration/market-makers/deposit-withdrawal-service) provides the programmatic API for moving assets through these bridges. Use it to get deposit addresses, initiate withdrawals, and monitor transfer status.
+</Tip>
+
 <CardGroup cols={3}>
   <Card title="Omni Bridge" icon="bridge" href="#omni-bridge">
     Cross-chain transfers for major EVM chains, Solana, and Bitcoin
@@ -51,7 +55,10 @@ The HOT Bridge routes assets through the HOT/Omni protocol, extending NEAR Inten
 
 ## Next steps
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
+  <Card title="Deposit/Withdrawal Service" icon="arrow-right-arrow-left" href="/integration/market-makers/deposit-withdrawal-service">
+    Programmatic API for moving assets through bridges
+  </Card>
   <Card title="Withdrawals" icon="arrow-right-from-bracket" href="/integration/verifier-contract/deposits-and-withdrawals/withdrawals">
     Learn how withdrawals use bridges to move assets out
   </Card>
