@@ -8,10 +8,6 @@
     "dark": "#d94300"
   },
   "favicon": "/favicon.svg",
-  "openapi": [
-    "/api-reference/openapi.json",
-    "/api-reference/explorer-openapi.yaml"
-  ],
   "navigation": {
     "tabs": [
       {
@@ -106,6 +102,10 @@
       },
       {
         "tab": "API reference",
+        "openapi": [
+          "/api-reference/openapi.json",
+          "/api-reference/explorer-openapi.yaml"
+        ],
         "groups": [
           {
             "group": "1Click Swap API",
