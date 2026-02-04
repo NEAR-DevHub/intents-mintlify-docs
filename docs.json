@@ -115,13 +115,8 @@
         ],
         "groups": [
           {
-            "group": "1Click Swap API",
-            "pages": [
-              "api-reference/endpoint/tokens",
-              "api-reference/endpoint/quote",
-              "api-reference/endpoint/deposit-submit",
-              "api-reference/endpoint/status"
-            ]
+            "group": "OneClick",
+            "pages": []
           },
           {
             "group": "Explorer API",
