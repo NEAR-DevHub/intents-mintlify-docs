@@ -1,0 +1,38 @@
+export const HeroCard = ({ light, dark, title, description, href }) => {
+  return (
+    <a className="group cursor-pointer pb-8" href={href}>
+      <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800">
+        <div className="p-4 flex items-center justify-center aspect-[4/3]">
+          <img src={light} className="block dark:hidden pointer-events-none max-h-full max-w-[85%] object-contain group-hover:scale-105 transition-all duration-100" />
+          <img src={dark} className="pointer-events-none max-h-full max-w-[85%] object-contain group-hover:scale-105 transition-all duration-100 hidden dark:block" />
+        </div>
+      </div>
+      <h3 className="mt-5 text-center text-gray-900 dark:text-zinc-50 font-medium group-hover:text-[#fb4d01] transition-colors duration-100">{title}</h3>
+      <span className="mt-1.5 block font-normal text-gray-500 dark:text-zinc-400">{description}</span>
+    </a>
+  );
+};
+
+<div className="grid sm:grid-cols-3 gap-x-6 gap-y-4 mt-6">
+  <HeroCard
+    light="/images/landing/swap-light.png"
+    dark="/images/landing/swap-dark.png"
+    title="Token Swaps"
+    description="Integrate cross-chain token swaps into your app, wallet, or exchange."
+    href="/integration/distribution-channels/introduction"
+  />
+  <HeroCard
+    light="/images/landing/market-maker-light.png"
+    dark="/images/landing/market-maker-dark.png"
+    title="Market Makers"
+    description="Provide liquidity and earn fees by competing to fulfill cross-chain swap intents."
+    href="/integration/market-makers/introduction"
+  />
+  <HeroCard
+    light="/images/landing/contract-light.png"
+    dark="/images/landing/contract-dark.png"
+    title="Verifier Contract"
+    description="Low-level interaction with the Verifier smart contract for custom integrations."
+    href="/integration/verifier-contract/introduction"
+  />
+</div>

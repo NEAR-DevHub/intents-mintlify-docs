@@ -16,76 +16,9 @@
           {
             "group": "Getting started",
             "pages": [
+              "getting-started/landing",
               "getting-started/introduction",
               "getting-started/first-swap"
-            ]
-          },
-          {
-            "group": "Integration",
-            "pages": [
-              {
-                "group": "Distribution Channels",
-                "icon": "arrow-pointer",
-                "pages": [
-                  "integration/distribution-channels/introduction",
-                  {
-                    "group": "1Click Swap API",
-                    "icon": "computer-mouse",
-                    "pages": [
-                      "integration/distribution-channels/1click-api/overview",
-                      "integration/distribution-channels/1click-api/authentication",
-                      "integration/distribution-channels/1click-api/fee-config"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Market Makers",
-                "icon": "chart-line",
-                "pages": [
-                  "integration/market-makers/introduction",
-                  {
-                    "group": "Message Bus",
-                    "icon": "message",
-                    "pages": [
-                      "integration/market-makers/message-bus/introduction",
-                      "integration/market-makers/message-bus/api",
-                      "integration/market-makers/message-bus/usage-examples"
-                    ]
-                  },
-                  "integration/market-makers/deposit-withdrawal-service"
-                ]
-              },
-              {
-                "group": "Verifier Contract",
-                "icon": "badge-check",
-                "pages": [
-                  "integration/verifier-contract/introduction",
-                  "integration/verifier-contract/account-abstraction",
-                  {
-                    "group": "Deposits & Withdrawals",
-                    "icon": "arrow-right-arrow-left",
-                    "pages": [
-                      "integration/verifier-contract/deposits-and-withdrawals/overview",
-                      "integration/verifier-contract/deposits-and-withdrawals/balances",
-                      "integration/verifier-contract/deposits-and-withdrawals/deposits",
-                      "integration/verifier-contract/deposits-and-withdrawals/withdrawals",
-                      "integration/verifier-contract/deposits-and-withdrawals/near-token"
-                    ]
-                  },
-                  "integration/verifier-contract/intent-types-and-execution",
-                  "integration/verifier-contract/signing-intents",
-                  "integration/verifier-contract/simulating-intents",
-                  "integration/verifier-contract/events"
-                ]
-              },
-              {
-                "group": "Token Bridges",
-                "icon": "bridge",
-                "pages": [
-                  "integration/bridging/overview"
-                ]
-              }
             ]
           },
           {
@@ -108,15 +41,31 @@
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Token Swaps",
+        "icon": "arrows-rotate",
         "openapi": [
           "/api-reference/openapi.json",
           "/api-reference/explorer-openapi.yaml"
         ],
         "groups": [
           {
-            "group": "OneClick",
-            "pages": []
+            "group": "Overview",
+            "pages": [
+              "integration/distribution-channels/introduction"
+            ]
+          },
+          {
+            "group": "1Click Swap API",
+            "icon": "computer-mouse",
+            "pages": [
+              "integration/distribution-channels/1click-api/overview",
+              "integration/distribution-channels/1click-api/authentication",
+              "integration/distribution-channels/1click-api/fee-config",
+              {
+                "group": "OneClick",
+                "pages": []
+              }
+            ]
           },
           {
             "group": "Explorer API",
@@ -124,6 +73,73 @@
               "api-reference/explorer/introduction",
               "api-reference/explorer/transactions",
               "api-reference/explorer/transactions-pages"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Market Makers",
+        "icon": "users",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "integration/market-makers/introduction"
+            ]
+          },
+          {
+            "group": "Message Bus",
+            "icon": "message",
+            "pages": [
+              "integration/market-makers/message-bus/introduction",
+              "integration/market-makers/message-bus/api",
+              "integration/market-makers/message-bus/usage-examples"
+            ]
+          },
+          {
+            "group": "Services",
+            "pages": [
+              "integration/market-makers/deposit-withdrawal-service"
+            ]
+          },
+          {
+            "group": "Token Bridges",
+            "icon": "bridge",
+            "pages": [
+              "integration/bridging/overview"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Verifier Contract",
+        "icon": "shield-check",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "integration/verifier-contract/introduction",
+              "integration/verifier-contract/account-abstraction"
+            ]
+          },
+          {
+            "group": "Deposits & Withdrawals",
+            "icon": "arrow-right-arrow-left",
+            "pages": [
+              "integration/verifier-contract/deposits-and-withdrawals/overview",
+              "integration/verifier-contract/deposits-and-withdrawals/balances",
+              "integration/verifier-contract/deposits-and-withdrawals/deposits",
+              "integration/verifier-contract/deposits-and-withdrawals/withdrawals",
+              "integration/verifier-contract/deposits-and-withdrawals/near-token"
+            ]
+          },
+          {
+            "group": "Intents",
+            "pages": [
+              "integration/verifier-contract/intent-types-and-execution",
+              "integration/verifier-contract/signing-intents",
+              "integration/verifier-contract/simulating-intents",
+              "integration/verifier-contract/events"
             ]
           }
         ]

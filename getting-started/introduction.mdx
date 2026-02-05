@@ -1,14 +1,14 @@
 ---
-title: "NEAR Intents"
-sidebarTitle: 'Introduction'
+title: "What are Intents?"
+sidebarTitle: "What are Intents?"
 description: "A multi-chain transaction protocol where users specify desired outcomes and market makers compete for best execution."
-icon: 'book-open'
+icon: 'lightbulb'
 ---
 
 <img className="block dark:hidden" src="/images/diagrams/intents-intro-light.png" alt="NEAR Intents Architecture" />
 <img className="hidden dark:block" src="/images/diagrams/intents-intro-dark.png" alt="NEAR Intents Architecture" />
 
-## What is NEAR Intents?
+## What are NEAR Intents?
 
 NEAR Intents is a multichain transaction protocol where users specify desired outcomes and market makers compete for best execution.
 
@@ -46,10 +46,6 @@ Market makers compete to fulfill your intent, and smart contracts guarantee atom
   No need for accounts on multiple networks. Use your existing wallet on any supported chain—no NEAR account required.
 </Card>
 
-<Card title="Faster, cheaper bridging" icon="bridge" horizontal>
-  Powered by [Omnibridge](https://docs.near.org/chain-abstraction/omnibridge/overview), a revolutionary approach to cross-chain transfers that dramatically reduces fees and transaction times compared to traditional bridges.
-</Card>
-
 <Card title="Competitive pricing" icon="chart-line" horizontal>
   Market makers compete for your business, ensuring you get optimal rates without manual price comparison.
 </Card>
@@ -63,67 +59,15 @@ Market makers compete to fulfill your intent, and smart contracts guarantee atom
 </Card>
 </CardGroup>
 
-## Who uses NEAR Intents?
+import IntegrationCards from "/snippets/integration-cards.mdx";
 
-<Tabs>
-<Tab title="Wallet Developers">
-  Integrate cross-chain swaps directly into your wallet, offering users seamless multichain experiences without building bridge infrastructure.
-  
-  <Check>
-  Enable users to swap tokens across chains without leaving your interface.
-  </Check>
-</Tab>
+## Choose your integration path
 
-<Tab title="DApp Builders">
-  Allow users to interact with your application using tokens from any supported chain, removing blockchain barriers to entry.
-  
-  <Check>
-  Accept payments in any token while receiving your preferred token on your preferred chain.
-  </Check>
-</Tab>
-
-<Tab title="Traders">
-  Execute cross-chain arbitrage and portfolio rebalancing with competitive rates from multiple market makers.
-  
-  <Check>
-  Access deep liquidity across chains without fragmentation.
-  </Check>
-</Tab>
-
-<Tab title="Market Makers">
-  Compete to fulfill user intents, earning fees while providing valuable liquidity infrastructure.
-  
-  <Check>
-  Build automated strategies that serve intent requests profitably.
-  </Check>
-</Tab>
-</Tabs>
+<IntegrationCards />
 
 <Info>
 **Recently renamed**: NEAR Intents was previously known as "Defuse". While documentation is being updated, you may see references to both names.
 </Info>
-
-## Getting started
-
-Choose your path based on your role:
-
-<CardGroup cols={2}>
-<Card title="Execute your first swap" icon="arrows-rotate" href="/getting-started/first-swap">
-  Complete your first cross-chain token swap using the 1Click API.
-</Card>
-
-<Card title="Build a distribution channel" icon="code" href="/integration/distribution-channels/introduction">
-  Add NEAR Intents to your wallet, exchange, or dApp with our integration guide.
-</Card>
-
-<Card title="Become a market maker" icon="users" href="/integration/market-makers/introduction">
-  Learn how to provide liquidity and fulfill user intents profitably.
-</Card>
-
-<Card title="Explore supported chains" icon="cubes-stacked" href="/resources/chain-support">
-  View all supported blockchains, tokens, and cross-chain routes.
-</Card>
-</CardGroup>
 
 ## Learn more
 
