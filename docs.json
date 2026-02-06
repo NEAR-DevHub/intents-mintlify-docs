@@ -11,15 +11,57 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Home",
-        "icon": "house",
+        "tab": "Intents",
+        "icon": "route",
         "groups": [
+          {
+            "group": "Intents",
+            "pages": [
+              "/index",
+              "/getting-started/what-are-intents",
+              "/resources/chain-support"
+            ]
+          },
           {
             "group": "Getting started",
             "pages": [
-              "getting-started/landing",
-              "getting-started/what-are-intents",
               "getting-started/first-swap"
+            ]
+          },
+          {
+            "group": "Integrating Token Swaps",
+            "icon": "puzzle-piece",
+            "openapi": "/api-reference/openapi.json",
+            "pages": [
+              {
+                "group": "1Click Swap API",
+                "pages": [
+                  "integration/distribution-channels/1click-api/about-1click-api",
+                  "integration/distribution-channels/1click-api/authentication",
+                  "integration/distribution-channels/1click-api/fee-config",
+                  {
+                    "group": "API Reference",
+                    "icon": "code",
+                    "pages": [
+                      "GET /v0/tokens",
+                      "POST /v0/quote",
+                      "GET /v0/status",
+                      "GET /v0/any-input/withdrawals",
+                      "POST /v0/deposit/submit"
+                    ]
+                  },
+                  {
+                    "group": "Explorer API",
+                    "icon": "magnifying-glass",
+                    "openapi": "/api-reference/explorer-openapi.yaml",
+                    "pages": [
+                      "api-reference/explorer/introduction",
+                      "GET /api/v0/transactions",
+                      "GET /api/v0/transactions-pages"
+                    ]
+                  }
+                ]
+              }
             ]
           },
           {
@@ -42,56 +84,14 @@
         ]
       },
       {
-        "tab": "Token Swaps",
-        "icon": "arrows-rotate",
-        "groups": [
-          {
-            "group": "Token Swaps",
-            "pages": [
-              "integration/distribution-channels/introduction"
-            ]
-          },
-          {
-            "group": "1Click Swap API",
-            "icon": "computer-mouse",
-            "openapi": "/api-reference/openapi.json",
-            "pages": [
-              "integration/distribution-channels/1click-api/about-1click-api",
-              "integration/distribution-channels/1click-api/authentication",
-              "integration/distribution-channels/1click-api/fee-config",
-              {
-                "group": "API Endpoints",
-                "icon": "code",
-                "expanded": true,
-                "pages": [
-                  "GET /v0/tokens",
-                  "POST /v0/quote",
-                  "GET /v0/status",
-                  "GET /v0/any-input/withdrawals",
-                  "POST /v0/deposit/submit"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Explorer API",
-            "icon": "magnifying-glass",
-            "openapi": "/api-reference/explorer-openapi.yaml",
-            "pages": [
-              "api-reference/explorer/introduction",
-              "GET /api/v0/transactions",
-              "GET /api/v0/transactions-pages"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Market Makers",
         "icon": "users",
         "groups": [
           {
             "group": "Market Makers",
-            "pages": ["integration/market-makers/introduction"]
+            "pages": [
+              "integration/market-makers/introduction"
+            ]
           },
           {
             "group": "Message Bus",
@@ -104,12 +104,16 @@
           },
           {
             "group": "Services",
-            "pages": ["integration/market-makers/deposit-withdrawal-service"]
+            "pages": [
+              "integration/market-makers/deposit-withdrawal-service"
+            ]
           },
           {
             "group": "Token Bridges",
             "icon": "bridge",
-            "pages": ["integration/bridging/overview"]
+            "pages": [
+              "integration/bridging/overview"
+            ]
           }
         ]
       },
@@ -146,34 +150,18 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Supported Chains",
-          "href": "/resources/chain-support",
-          "icon": "check-circle"
-        },
-        {
-          "anchor": "System Status",
-          "href": "https://status.near-intents.org/posts/dashboard",
-          "icon": "server"
-        },
-        {
-          "anchor": "API Keys",
-          "href": "/integration/distribution-channels/1click-api/authentication",
-          "icon": "key"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/images/logo/light.svg",
-    "dark": "/images/logo/dark.svg",
-    "href": "https://near-intents.com"
+    "dark": "/images/logo/dark.svg"
   },
   "navbar": {
     "links": [
+      {
+        "label": "System Status",
+        "href": "https://status.near-intents.org/posts/dashboard"
+      },
       {
         "label": "Explorer",
         "href": "https://explorer.near-intents.org/"
