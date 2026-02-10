@@ -189,6 +189,9 @@
       "vscode"
     ]
   },
+  "ai": {
+    "enabled": true
+  },
   "footer": {
     "socials": {
       "x": "https://x.com/near_intents",
