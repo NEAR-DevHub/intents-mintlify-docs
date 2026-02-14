@@ -39,15 +39,15 @@ By using the 1Click Swap API, you agree to the [1Click Terms of Service](/securi
   </Step>
 
   <Step title="Request a quote">
-    Call the [`/v0/quote`](/api-reference/endpoint/quote) endpoint with the user's swap details. You'll receive pricing and a unique deposit address.
+    Call the [`/v0/quote`](/api-reference/oneclick/request-a-swap-quote) endpoint with the user's swap details. You'll receive pricing and a unique deposit address.
   </Step>
 
   <Step title="User deposits tokens">
-    The user sends tokens to the deposit address. 1Click automatically begins the swap. Optionally use [`/v0/deposit/submit`](/api-reference/endpoint/deposit-submit) with your transaction hash to speed up processing.
+    The user sends tokens to the deposit address. 1Click automatically begins the swap. Optionally use [`/v0/deposit/submit`](/api-reference/oneclick/submit-deposit-transaction-hash) with your transaction hash to speed up processing.
   </Step>
 
   <Step title="Monitor status">
-    Poll [`/v0/status`](/api-reference/endpoint/status) to track progress and display updates to your user.
+    Poll [`/v0/status`](/api-reference/oneclick/check-swap-execution-status) to track progress and display updates to your user.
   </Step>
 </Steps>
 
@@ -126,16 +126,16 @@ See a complete example in the [near-intents-examples](https://github.com/near-ex
 ## API Reference
 
 <CardGroup cols={2}>
-  <Card title="GET /v0/tokens" icon="list" href="/api-reference/1click/tokens">
+  <Card title="GET /v0/tokens" icon="list" href="/api-reference/oneclick/get-supported-tokens">
     Get supported tokens
   </Card>
-  <Card title="POST /v0/quote" icon="chart-line" href="/api-reference/1click/quote">
+  <Card title="POST /v0/quote" icon="chart-line" href="/api-reference/oneclick/request-a-swap-quote">
     Request swap quote
   </Card>
-  <Card title="POST /v0/deposit/submit" icon="paper-plane" href="/api-reference/1click/deposit-submit">
+  <Card title="POST /v0/deposit/submit" icon="paper-plane" href="/api-reference/oneclick/submit-deposit-transaction-hash">
     Submit deposit transaction
   </Card>
-  <Card title="GET /v0/status" icon="magnifying-glass" href="/api-reference/1click/status">
+  <Card title="GET /v0/status" icon="magnifying-glass" href="/api-reference/oneclick/check-swap-execution-status">
     Check swap status
   </Card>
 </CardGroup>

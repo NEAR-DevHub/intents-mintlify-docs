@@ -4,8 +4,6 @@ description: 'How to check your balance and identify tokens in the Verifier cont
 icon: 'wallet'
 ---
 
-This section explains how to check your token balance and how tokens are organized within the Verifier smart contract.
-
 ## Multi Token Standard (NEP-245)
 
 After a successful deposit, the Verifier contract manages tokens using the [Multi Token Standard (NEP-245)](https://nomicon.io/Standards/Tokens/MultiToken/Core). This enables uniform handling of all supported token types.
@@ -20,63 +18,75 @@ Each token is identified by a string-based token ID, prefixed with its standard 
 | Non-fungible (NEP-171) | `nep171:` | `nep171:coolnfts.near:rock.near` |
 | Multi Token (NEP-245) | `nep245:` | `nep245:mygame.near:shield.near` |
 
-### Examples
-
-<AccordionGroup>
-  <Accordion title="Wrapped NEAR (NEP-141)">
-    Wrapped NEAR is a fungible token with contract ID `wrap.near`.
-
-    **Token ID in Verifier:** `nep141:wrap.near`
-  </Accordion>
-
-  <Accordion title="NFT (NEP-171)">
-    An NFT from collection `coolnfts.near` with token ID `rock.near`.
-
-    **Token ID in Verifier:** `nep171:coolnfts.near:rock.near`
-  </Accordion>
-
-  <Accordion title="Multi Token (NEP-245)">
-    A game token from contract `mygame.near` with token ID `shield.near`.
-
-    **Token ID in Verifier:** `nep245:mygame.near:shield.near`
-  </Accordion>
-</AccordionGroup>
-
 ## Checking your balance
 
 After a successful deposit, query your balance using [mt_balance_of](https://near.github.io/intents/defuse_nep245/trait.MultiTokenCore.html#tymethod.mt_balance_of), which adheres to the NEP-245 standard.
 
-### Parameters
+<Tabs>
+  <Tab title="NEAR CLI">
+    ```bash
+    near contract call-function as-read-only intents.near mt_balance_of \
+      json-args '{"account_id": "your-account.near", "token_id": "nep141:wrap.near"}' \
+      network-config mainnet now
+    ```
+  </Tab>
+  <Tab title="NEAR API JS">
+    ```typescript
+    import { JsonRpcProvider } from "near-api-js";
 
-```json
-{
-  "account_id": "alice.near",
-  "token_id": "nep141:wrap.near"
-}
-```
+    const provider = new JsonRpcProvider({ url: "https://rpc.fastnear.com" });
 
-### Using near-cli
+    const balance = await provider.callFunction({
+      contractId: "intents.near",
+      method: "mt_balance_of",
+      args: {
+        account_id: "your-account.near",
+        token_id: "nep141:wrap.near",
+      },
+    });
 
-```bash
-near contract call-function as-read-only intents.near mt_balance_of \
-  json-args '{ "account_id": "alice.near", "token_id": "nep141:wrap.near" }' \
-  network-config mainnet now
-```
+    console.log(balance);
+    ```
+
+    See contract interaction example in [near-api-examples](https://github.com/near-examples/near-api-examples/blob/main/near-api-js/examples/contract-interaction.ts) repository.
+  </Tab>
+</Tabs>
+
+| Parameter | Description |
+|-----------|-------------|
+| `account_id` | The NEAR account to check the balance of. |
+| `token_id` | The token ID with its standard prefix (e.g., `nep141:wrap.near`). See [Token ID format](#token-id-format). |
 
 ### Batch balance query
 
-To check multiple token balances at once, use `mt_batch_balance_of`:
+To check multiple token balances at once, use [mt_batch_balance_of](https://near.github.io/intents/defuse_nep245/trait.MultiTokenCore.html#tymethod.mt_batch_balance_of):
 
-```bash
-near contract call-function as-read-only intents.near mt_batch_balance_of \
-  json-args '{
-    "account_id": "alice.near",
-    "token_ids": [
-      "nep141:wrap.near",
-      "nep141:usdt.tether-token.near"
-    ]
-  }' network-config mainnet now
-```
+<Tabs>
+  <Tab title="NEAR CLI">
+    ```bash
+    near contract call-function as-read-only intents.near mt_batch_balance_of \
+      json-args '{"account_id": "your-account.near", "token_ids": ["nep141:wrap.near", "nep141:usdt.tether-token.near"]}' \
+      network-config mainnet now
+    ```
+  </Tab>
+  <Tab title="NEAR API JS">
+    ```typescript
+    const balances = await provider.callFunction({
+      contractId: "intents.near",
+      method: "mt_batch_balance_of",
+      args: {
+        account_id: "your-account.near",
+        token_ids: [
+          "nep141:wrap.near",
+          "nep141:usdt.tether-token.near",
+        ],
+      },
+    });
+
+    console.log(balances);
+    ```
+  </Tab>
+</Tabs>
 
 Response:
 

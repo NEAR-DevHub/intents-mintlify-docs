@@ -1,23 +1,52 @@
 ---
-title: 'Introduction'
-description: 'Overview of the Verifier smart contract for the NEAR Intents protocol'
+title: 'Verifier Contract'
+sidebarTitle: 'Introduction'
+description: 'The on-chain settlement layer for NEAR Intents'
 icon: 'book-open'
 ---
-
-The Verifier contract is a smart contract on the NEAR blockchain that serves as the atomic mediator for transferring assets among users in the NEAR Intents ecosystem.
 
 <img className="block dark:hidden" src="/images/diagrams/verifier-contract-intro-light.png" alt="NEAR Intents Verifier Contract" />
 <img className="hidden dark:block" src="/images/diagrams/verifier-contract-intro-dark.png" alt="NEAR Intents Verifier Contract" />
 
-<Info>
-The former name of the smart contract is "Defuse". You may still see this name in some places in the codebase. It is planned to be updated in the future.
-</Info>
+The Verifier Smart Contract is the on-chain settlement layer for NEAR Intents. It operates as an internal ledger, tracking token balances for all participants. Swaps and transfers happen within the contract's balance records, and actual movement of tokens to external chains occurs only on withdrawal through [token bridges](/integration/bridging/overview).
+
+The typical flow is:
+
+1. **Deposit** tokens into the Verifier contract. The contract tracks your balance internally. _(See [Deposits](/integration/verifier-contract/deposits-and-withdrawals/deposits))_
+
+2. **Swap or transfer** by submitting intents. Users express their "intent" to perform a transaction (e.g., exchange USDT for USDC, or transfer tokens to another user). Intents can be submitted directly or bundled together by a third party like the Message Bus for atomic execution. _(See [Intent Types](/integration/verifier-contract/intent-types-and-execution))_
+
+3. **Withdraw** tokens to your NEAR account or external chain. For external chain asset transfer, the Verifier settles the withdrawal through the appropriate token bridge, delivering tokens to the destination address. _(See [Withdrawals](/integration/verifier-contract/deposits-and-withdrawals/withdrawals))_
+
+## Who is this documentation for?
+
+Most applications integrating token swaps don't need to work with the Verifier contract directly. The [1Click Swap API](/integration/distribution-channels/1click-api/about-1click-api) handles intent creation, market maker coordination, and execution for you.
+
+This section is for developers who need lower-level control and want to:
+
+- Interact with the Verifier smart contract directly
+- Create payloads for the [Message Bus](/integration/market-makers/message-bus/introduction) (a matching system that brings together quotes from market makers with transaction requests)
+
+## Prerequisites
+
+Before working directly with the Verifier contract, you should have:
+
+- A [NEAR account](https://docs.near.org/tutorials/protocol/create-account) (named account like `yourname.near` or implicit account)
+- Tokens to deposit (fungible tokens like USDC, USDT, or wrapped NEAR)
+- Basic understanding of [NEAR transactions](https://docs.near.org/concepts/protocol/transactions) and [cross-contract calls](https://docs.near.org/smart-contracts/anatomy/crosscontract)
+- Familiarity with JSON and digital signatures
+
+<Tip>
+If you're new to NEAR, start with the [NEAR documentation](https://docs.near.org/) to understand accounts, transactions, and the basics of smart contract interaction.
+</Tip>
 
 ## Deployment
 
 The Verifier smart contract is deployed at [`intents.near`](https://nearblocks.io/address/intents.near).
 
-There is no testnet deployment.
+<Warning>
+There is no testnet deployment. Use small amounts for testing purposes.
+</Warning>
 
 ## Source code
 
@@ -27,89 +56,9 @@ The contract is open source. You can find it on GitHub:
   View the source code for the Verifier smart contract
 </Card>
 
-## Who is this documentation for?
-
-This section is written for developers who want to:
-
-- Interact with the Verifier smart contract directly
-- Create payloads for the Message Bus (a matching system that brings together quotes from market makers with transaction requests)
-
-## Prerequisites
-
-Before working with the Verifier contract, you should have:
-
-- A NEAR wallet (named account like `yourname.near` or implicit account)
-- Tokens to deposit (fungible tokens like USDC, USDT, or wrapped NEAR)
-- Basic understanding of [NEAR transactions](https://docs.near.org/concepts/protocol/transactions) and [cross-contract calls](https://docs.near.org/smart-contracts/anatomy/crosscontract)
-- Familiarity with JSON and digital signatures
-
-<Tip>
-If you're new to NEAR, start with the [NEAR documentation](https://docs.near.org/) to understand accounts, transactions, and the basics of smart contract interaction.
-</Tip>
-
-## How the Verifier works
-
-The workflow starts with the assumption that any participant in the Verifier smart contract has tokens [deposited](/integration/verifier-contract/deposits-and-withdrawals/deposits) into the contract.
-
-In the NEAR Intents protocol, users express their "intent" to perform a transaction. Transactions can include:
-
-- Transferring tokens within the smart contract
-- Receiving other tokens in exchange
-- Transferring to another user
-
-Intents can be submitted directly to the smart contract, or bundled together by a third party (like the Message Bus) to be executed atomically.
-
-## Example use cases
-
-<AccordionGroup>
-  <Accordion title="Simple transfer">
-    Alice, the owner of `alice.near`, wants to transfer a fungible token to `bob.near`.
-
-    1. Alice creates an Intent object of type `Transfer`, specifying `bob.near` as the destination
-    2. Alice [signs the intent](/integration/verifier-contract/signing-intents)
-    3. Alice calls `execute_intents` on the Verifier smart contract
-    4. The contract transfers ownership of the tokens from `alice.near` to `bob.near`
-  </Accordion>
-
-  <Accordion title="Token swap">
-    Alice and Bob agree to swap 1000 USDT for 1000 USDC. Without a mediator, this requires trust—Alice could receive USDC and never send USDT.
-
-    The Verifier solves this:
-
-    1. **Deposit**: Alice and Bob deposit their USDT and USDC to the Verifier contract. They retain full ownership and can withdraw at any time.
-    2. **Create intents**: Alice creates a `TokenDiff` intent expressing she'll give up 1000 USDT if she receives 1000 USDC. Bob creates the opposite intent.
-    3. **Bundle and execute**: Both intents are bundled into a list. Either party calls `execute_intents`.
-    4. **Atomic swap**: The Verifier fulfills both intents atomically—Alice now has 1000 USDC and Bob has 1000 USDT.
-    5. **Withdraw**: Both can withdraw their tokens at any time.
-
-    This is how peer-to-peer trading works on NEAR Intents. The Message Bus (or any third party) can act as the matchmaker that bundles `TokenDiff` intents.
-  </Accordion>
-
-  <Accordion title="Withdrawal">
-    From the previous example, if Alice wants to withdraw her USDC:
-
-    1. Alice creates an Intent of type `FtWithdraw`, specifying the receiving address and amount
-    2. Alice [signs the intent](/integration/verifier-contract/signing-intents)
-    3. Alice calls `execute_intents`
-    4. The Verifier verifies her ownership and sends the tokens to her specified address
-
-    Withdrawals can also be done by directly calling the Verifier smart contract. See [Withdrawals](/integration/verifier-contract/deposits-and-withdrawals/withdrawals) for more details.
-  </Accordion>
-</AccordionGroup>
-
-## Real transaction examples
-
-View these transactions on NEAR mainnet to see the Verifier contract in action:
-
-| Operation | Transaction |
-|-----------|-------------|
-| Add public key | [FBTRk6jR...](https://nearblocks.io/txns/FBTRk6jRUSW3E1SjBfYbA71DhN5xTX1yE2foy98TafrM#execution) |
-| Remove public key | [69XiJcRt...](https://nearblocks.io/txns/69XiJcRtipZ2i8bkHHgCaSAkswd8Lt6VxiJuM8dKq9qn#execution) |
-| Deposit tokens | [DWv4AkrL...](https://nearblocks.io/txns/DWv4AkrLxnbJV6paqSFR3Tt42SdVAtunBbEi2XATdXTW#enhanced) |
-| Deposit + execute intents | [Bn3iC9B1...](https://nearblocks.io/txns/Bn3iC9B1uUJrX59x7cfxngY1E159HspzTCyyDVwx5DMJ) |
-| Deposit + swap + withdraw | [BMFcWFRe...](https://nearblocks.io/txns/BMFcWFReAzbH8okweUio2nNTuVXtMr1hXeaaNR4UhEzS) |
-| Withdraw by transaction | [3E8TDSLq...](https://nearblocks.io/txns/3E8TDSLq2Xn8JZEAdbeX8NGS7Ps6f1EwLeoFxhT7YY3G#enhanced) |
-| Execute intents | [FxpbspXj...](https://nearblocks.io/txns/FxpbspXjRQg3gDii18ibp3w7yvbe7MWaDHQfVqVfq7xN#enhanced) |
+<Info>
+The former name of the smart contract is "Defuse". You may still see this name in some places in the codebase. It is planned to be updated in the future.
+</Info>
 
 ## Next steps
 
@@ -117,7 +66,7 @@ View these transactions on NEAR mainnet to see the Verifier contract in action:
   <Card title="Account Abstraction" icon="user" href="/integration/verifier-contract/account-abstraction">
     Learn about account identification and key management
   </Card>
-  <Card title="Deposits & Withdrawals" icon="arrow-right-arrow-left" href="/integration/verifier-contract/deposits-and-withdrawals/overview">
+  <Card title="Deposits & Withdrawals" icon="arrow-right-arrow-left" href="/integration/verifier-contract/deposits-and-withdrawals/deposits">
     Learn how to deposit and withdraw tokens
   </Card>
   <Card title="Intent Types" icon="list" href="/integration/verifier-contract/intent-types-and-execution">

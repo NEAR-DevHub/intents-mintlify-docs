@@ -21,24 +21,61 @@ When using signed intents, the token ID is prefixed (e.g., `nep141:wrap.near`).
 
 ## Withdrawing fungible tokens (NEP-141)
 
+The Verifier contract exposes [ft_withdraw](https://near.github.io/intents/defuse/tokens/nep141/trait.FungibleTokenWithdrawer.html#tymethod.ft_withdraw) for direct withdrawals and [FtWithdraw](https://near.github.io/intents/defuse_core/intents/tokens/struct.FtWithdraw.html) for intent-based withdrawals.
+
 ### Via direct function call
 
-Use [ft_withdraw](https://near.github.io/intents/defuse/tokens/nep141/trait.FungibleTokenWithdrawer.html#tymethod.ft_withdraw) with `near-cli`:
+Replace `<token-contract>` with the token's contract address and adjust the `amount` for the token's decimal precision.
 
-```bash
-near contract call-function as-transaction intents.near ft_withdraw \
-  json-args '{
-    "token": "wrap.near",
-    "receiver_id": "alice.near",
-    "amount": "1000"
-  }' \
-  prepaid-gas '100.0 Tgas' \
-  attached-deposit '1 yoctoNEAR' \
-  sign-as alice.near \
-  network-config mainnet sign-with-keychain send
-```
+<Tabs>
+  <Tab title="NEAR CLI">
+    ```bash
+    near call intents.near ft_withdraw \
+      '{"token": "<token-contract>", "receiver_id": "your-account.near", "amount": "<amount>"}' \
+      --deposit 0.000000000000000000000001 \
+      --gas 100000000000000 \
+      --useAccount your-account.near \
+      --networkId mainnet
+    ```
+  </Tab>
+  <Tab title="NEAR API JS">
+    ```typescript
+    import { Account, JsonRpcProvider, teraToGas, KeyPairString } from "near-api-js";
+
+    const accountId = "your-account.near";
+    const privateKey = "ed25519:3D4YudU..." as KeyPairString;
+
+    const provider = new JsonRpcProvider({ url: "https://rpc.fastnear.com" });
+    const account = new Account(accountId, provider, privateKey);
+
+    await account.callFunction({
+      contractId: "intents.near",
+      methodName: "ft_withdraw",
+      args: {
+        token: "<token-contract>",
+        receiver_id: "your-account.near",
+        amount: "<amount>",
+      },
+      gas: teraToGas("100"),
+      deposit: 1n, // 1 yoctoNEAR
+    });
+    ```
+
+    See contract interaction example in [near-api-examples](https://github.com/near-examples/near-api-examples/blob/main/near-api-js/examples/contract-interaction.ts) repository.
+  </Tab>
+</Tabs>
+
+| Parameter | Description |
+|-----------|-------------|
+| `token` | The token contract to withdraw (e.g., `wrap.near` for wNEAR). No prefix for direct calls. |
+| `receiver_id` | The NEAR account that will receive the withdrawn tokens. |
+| `amount` | The amount in the token's smallest unit. Each token has different decimals (e.g., wNEAR has 24, USDC has 6). |
+| `--deposit` | 1 yoctoNEAR, required for the withdrawal call. |
+| `--gas` | 100 TGas to cover the cross-contract call. |
 
 ### Via signed intent
+
+Submit a signed [FtWithdraw](https://near.github.io/intents/defuse_core/intents/tokens/struct.FtWithdraw.html) intent through `execute_intents`. When using intents, the token ID must include the `nep141:` prefix.
 
 ```json
 {
@@ -46,12 +83,24 @@ near contract call-function as-transaction intents.near ft_withdraw \
   "payload": {
     "recipient": "intents.near",
     "nonce": "Vij2xgAlKBKzgNPJFViEQRhPvveC+P9xRwOXFW/IK5w=",
-    "message": "{\"deadline\":\"2025-05-20T13:29:34.360380Z\",\"intents\":[{\"intent\":\"ft_withdraw\",\"token\":\"wrap.near\",\"receiver_id\":\"alice.near\",\"amount\":\"1000\"}],\"signer_id\":\"user1.test.near\"}"
+    "message": "{\"deadline\":\"2025-05-20T13:29:34.360380Z\",\"intents\":[{\"intent\":\"ft_withdraw\",\"token\":\"nep141:wrap.near\",\"receiver_id\":\"alice.near\",\"amount\":\"1000\"}],\"signer_id\":\"user1.test.near\"}"
   },
   "public_key": "ed25519:C3jXhkGhEx88Gj7XKtUziJKXEBMRaJ67bWFkxJikVxZ2",
   "signature": "ed25519:5op5APf9YaRznvMVwZBw6GGk9ychU3QtNRKJSxuVajHFMQths4ZZMRoAENU1zWhjinqz8KuLNyM9589c86opopyT"
 }
 ```
+
+See [Intent Types and Execution](/integration/verifier-contract/intent-types-and-execution) for the full signed intent format and how to submit intents.
+
+## Real transaction examples
+
+View these withdrawal and intent transactions on NEAR mainnet:
+
+| Operation | Transaction |
+|-----------|-------------|
+| Withdraw by transaction | [3E8TDSLq...](https://nearblocks.io/txns/3E8TDSLq2Xn8JZEAdbeX8NGS7Ps6f1EwLeoFxhT7YY3G#enhanced) |
+| Deposit + swap + withdraw | [BMFcWFRe...](https://nearblocks.io/txns/BMFcWFReAzbH8okweUio2nNTuVXtMr1hXeaaNR4UhEzS) |
+| Execute intents | [FxpbspXj...](https://nearblocks.io/txns/FxpbspXjRQg3gDii18ibp3w7yvbe7MWaDHQfVqVfq7xN#enhanced) |
 
 ## Withdrawal functions by token type
 
@@ -61,6 +110,10 @@ near contract call-function as-transaction intents.near ft_withdraw \
 | NEP-171 (NFT) | [nft_withdraw](https://near.github.io/intents/defuse/tokens/nep171/trait.NonFungibleTokenWithdrawer.html#tymethod.nft_withdraw) | [NftWithdraw](https://near.github.io/intents/defuse_core/intents/tokens/struct.NftWithdraw.html) |
 | NEP-245 (Multi Token) | [mt_withdraw](https://near.github.io/intents/defuse/tokens/nep245/trait.MultiTokenWithdrawer.html#tymethod.mt_withdraw) | [MtWithdraw](https://near.github.io/intents/defuse_core/intents/tokens/struct.MtWithdraw.html) |
 | Native NEAR | N/A | [NativeWithdraw](https://near.github.io/intents/defuse_core/intents/tokens/struct.NativeWithdraw.html) |
+
+## Withdrawing non-fungible tokens (NEP-171)
+
+To withdraw NFTs from the Verifier contract, use [nft_withdraw](https://near.github.io/intents/defuse/tokens/nep171/trait.NonFungibleTokenWithdrawer.html#tymethod.nft_withdraw) for direct calls or [NftWithdraw](https://near.github.io/intents/defuse_core/intents/tokens/struct.NftWithdraw.html) for intent-based withdrawals, following the same patterns as fungible token withdrawals above.
 
 ## Refunds on failed withdrawals
 
@@ -75,9 +128,13 @@ A refund restores your balance when a withdrawal fails on the target smart contr
 The [withdraw function](https://near.github.io/intents/defuse/tokens/nep141/trait.FungibleTokenWithdrawer.html#tymethod.ft_withdraw) has a `msg` parameter from the [NEP-141 standard](https://nomicon.io/Standards/Tokens/FungibleToken/Core):
 
 | `msg` Value | Transfer Method | Refund on Failure? |
-|-------------|-----------------|-------------------|
-| Not specified or `null` | `ft_transfer` | Yes |
-| Any string value (including `""`) | `ft_transfer_call` | No |
+|-------------|-----------------|:------------------:|
+| Not specified or `null` | `ft_transfer` | ✅ |
+| Any string value (including `""`) | `ft_transfer_call` | ❌ |
+
+<Warning>
+An empty string (`""`) still counts as a specified `msg` value and will use `ft_transfer_call` with no refund. Only omitting `msg` entirely or setting it to `null` enables refund protection.
+</Warning>
 
 <Info>
 This same logic applies to Multi Token and NFT transfers with their corresponding functions: `nft_transfer`, `nft_transfer_call`, `mt_transfer`, and `mt_transfer_call`.
@@ -92,13 +149,13 @@ The refund issue occurs when an asynchronous call to another smart contract (e.g
 ### Summary
 
 | Withdrawal Request | `msg` Parameter | Refund Possible? |
-|-------------------|-----------------|------------------|
-| `FtWithdraw` intent or `ft_withdraw` call | No (or `null`) | Yes |
-| `FtWithdraw` intent or `ft_withdraw` call | Yes, as string | No |
-| `MtWithdraw` intent or `mt_withdraw` call | No (or `null`) | Yes |
-| `MtWithdraw` intent or `mt_withdraw` call | Yes, as string | No |
-| `NftWithdraw` intent or `nft_withdraw` call | No (or `null`) | Yes |
-| `NftWithdraw` intent or `nft_withdraw` call | Yes, as string | No |
+|-------------------|:---------------:|:----------------:|
+| `FtWithdraw` intent or `ft_withdraw` call | No (or `null`) | ✅ |
+| `FtWithdraw` intent or `ft_withdraw` call | Yes, as string | ❌ |
+| `MtWithdraw` intent or `mt_withdraw` call | No (or `null`) | ✅ |
+| `MtWithdraw` intent or `mt_withdraw` call | Yes, as string | ❌ |
+| `NftWithdraw` intent or `nft_withdraw` call | No (or `null`) | ✅ |
+| `NftWithdraw` intent or `nft_withdraw` call | Yes, as string | ❌ |
 
 <Tip>
 **Recommendation:** To ensure a successful withdrawal with refund protection, avoid specifying `msg` or set it explicitly to `null`. For programmable actions on the receiving contract, perform them from your own account using `ft_transfer_call`.
