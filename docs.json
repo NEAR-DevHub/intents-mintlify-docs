@@ -132,11 +132,10 @@
             "group": "Deposits & Withdrawals",
             "icon": "arrow-right-arrow-left",
             "pages": [
-              "integration/verifier-contract/deposits-and-withdrawals/overview",
-              "integration/verifier-contract/deposits-and-withdrawals/balances",
               "integration/verifier-contract/deposits-and-withdrawals/deposits",
               "integration/verifier-contract/deposits-and-withdrawals/withdrawals",
-              "integration/verifier-contract/deposits-and-withdrawals/near-token"
+              "integration/verifier-contract/deposits-and-withdrawals/near-token",
+              "integration/verifier-contract/deposits-and-withdrawals/balances"
             ]
           },
           {
